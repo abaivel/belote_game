@@ -25,6 +25,12 @@ jobs:
           npm ci
           npm run build
 
+
+      - name: 
+        run: |
+          sed -i 's|src="/bundle.js"|src="/belote/bundle.js"|g' index.html
+        working-directory: frontend/dist
+
       - name: Move build to root directory
         run: |
           mv frontend/dist .
@@ -39,11 +45,6 @@ jobs:
           DB_PASS=${{ secrets.DB_PASSWORD }}
           EOF
         working-directory: backend
-
-      - name: 
-        run: |
-          sed -i 's|src="/bundle.js"|src="/belote/bundle.js"|g' index.html
-        working-directory: .
 
       - name: Deploy via FTP
         uses: SamKirkland/FTP-Deploy-Action@v4.3.4
