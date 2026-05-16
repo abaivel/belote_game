@@ -18,6 +18,11 @@ jobs:
           sed -i 's|http://localhost/belote_game|https://baivel.com/belote|g' vite.config.js
         working-directory: frontend
 
+      - name: 
+        run: |
+          sed -i 's|/backend/api|/belote/backend/api|g' api.js
+        working-directory: frontend/src/utils
+
       - name: Build React app
         working-directory: frontend
         run: |
