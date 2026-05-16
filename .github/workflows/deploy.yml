@@ -1,0 +1,58 @@
+name: Deploy to Server
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: 
+        run: |
+          sed -i 's|http://localhost/belote_game|https://baivel.com/belote|g' vite.config.js
+        working-directory: frontend
+
+      - name: Build React app
+        working-directory: frontend
+        run: |
+          npm install
+          npm ci
+          npm run build
+
+      - name: Move build to root directory
+        run: |
+          mv frontend/dist .
+
+      - name: Create .env file
+        run: |
+          touch .env
+          cat > .env <<EOF
+          DB_HOST=${{ secrets.DB_HOST }}
+          DB_NAME=${{ secrets.DB_NAME }}
+          DB_USER=${{ secrets.DB_USER }}
+          DB_PASS=${{ secrets.DB_PASSWORD }}
+          EOF
+        working-directory: backend
+
+      - name: 
+        run: |
+          sed -i 's|src="/bundle.js"|src="/belote/bundle.js"|g' index.html
+        working-directory: .
+
+      - name: Deploy via FTP
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.4
+        with:
+            server: ${{ secrets.FTP_SERVER }}
+            username: ${{ secrets.FTP_USERNAME }}
+            password: ${{ secrets.FTP_PASSWORD }}
+            local-dir: .
+            server-dir: www/belote
+
+      
+
