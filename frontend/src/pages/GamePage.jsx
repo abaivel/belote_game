@@ -16,7 +16,7 @@ const SUIT_COLORS  = { hearts: '#c0392b', diamonds: '#c0392b', clubs: '#f5ead5',
 const SEAT_POSITIONS = [
   { top: '10%',  left: '50%', transform: 'translateX(-50%)' },
   { top: '50%', right: '1%', transform: 'translateY(-50%)' },
-  { bottom: '10%', left: '50%', transform: 'translateX(-50%)' },
+  { bottom: '15%', left: '50%', transform: 'translateX(-50%)' },
   { top: '50%', left: '1%',  transform: 'translateY(-50%)' },
 ];
 
@@ -358,7 +358,7 @@ export function GamePage({ gameId, gameCode, mySeat, onLeave }) {
 
         {/* ---- ENCHÈRES ---- */}
         {isBidding && (
-          <div style={{ position: 'relative', width: '100%', height: 0 }}>
+          <div style={{ position: 'relative', width: '100%', height: 0, marginTop: 200 }}>
             <BiddingPanel state={state} myPlayer={myPlayer} onBid={handleBid} loading={bidLoading} />
           </div>
         )}

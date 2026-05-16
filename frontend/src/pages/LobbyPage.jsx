@@ -27,6 +27,8 @@ export function LobbyPage({ onJoinGame }) {
     try {
       const data = await api.listGames();
       setGames(data.games);
+      console.log(data.games[0].players_ids.split(","));
+      console.log(data.games[0].players_ids.split(",").includes(user.id.toString()));
     } catch {}
   };
 
@@ -48,6 +50,11 @@ export function LobbyPage({ onJoinGame }) {
       onJoinGame(data.gameId, data.code, data.seat, data.team);
     } catch (e) { setError(e.message); }
     finally { setLoading(false); }
+  };
+
+  const handleJoinAgain = async (game) => {
+    var seat = game.players_ids.split(",").indexOf(user.id.toString());
+    onJoinGame(game.id, game.code, seat, (seat)%2 +1);
   };
 
   return (
@@ -145,8 +152,9 @@ export function LobbyPage({ onJoinGame }) {
                     }}>
                       {STATUS_LABELS[g.status]}
                     </span>
-                    {g.status === 'waiting' && g.player_count < 4 && (
-                      <button onClick={() => handleJoin(g.code)} style={btnStyle('small')}>Rejoindre</button>
+                    {g.status === 'waiting' && g.player_count < 4 ? (
+                      <button onClick={() => handleJoin(g.code)} style={btnStyle('small')}>Rejoindre</button> ):
+                      (g.players_ids.split(",").includes(user.id.toString()) && <button onClick={() => handleJoinAgain(g)} style={btnStyle('small')}>Ouvrir</button>
                     )}
                   </div>
                 </div>
