@@ -33,7 +33,9 @@ jobs:
 
       - name: Move build to root directory
         run: |
-          mv frontend/dist .
+          mv frontend/dist/* .
+          rm -d -r frontend
+          rm -d -r sql
 
       - name: Create .env file
         run: |
