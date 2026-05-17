@@ -9,10 +9,10 @@
 import { useState } from 'react';
 
 const SUIT_INFO = {
-  hearts:   { symbol: '♥', label: 'Cœur',   color: '#e74c3c' },
-  diamonds: { symbol: '♦', label: 'Carreau', color: '#e74c3c' },
-  clubs:    { symbol: '♣', label: 'Trèfle',  color: '#f5ead5' },
-  spades:   { symbol: '♠', label: 'Pique',   color: '#f5ead5' },
+  hearts:   { symbol: '♥', label: 'Cœur',   color: '#e74c3c', card_color: '#e74c3c' },
+  diamonds: { symbol: '♦', label: 'Carreau', color: '#e74c3c', card_color: '#e74c3c' },
+  clubs:    { symbol: '♣', label: 'Trèfle',  color: '#f5ead5', card_color: '#1a1a2e' },
+  spades:   { symbol: '♠', label: 'Pique',   color: '#f5ead5', card_color: '#1a1a2e' },
 };
 
 const SUITS = ['hearts', 'diamonds', 'clubs', 'spades'];
@@ -160,17 +160,17 @@ function TalonCard({ suit, value }) {
       flexShrink: 0,
     }}>
       <div style={{ lineHeight: 1 }}>
-        <div style={{ fontSize: 14, fontWeight: 700, color: suitInfo.color, fontFamily:"'Cinzel',serif" }}>
+        <div style={{ fontSize: 14, fontWeight: 700, color: suitInfo.card_color, fontFamily:"'Cinzel',serif" }}>
           {VALUE_DISPLAY[value] || value}
         </div>
-        <div style={{ fontSize: 12, color: suitInfo.color }}>{suitInfo.symbol}</div>
+        <div style={{ fontSize: 12, color: suitInfo.card_color }}>{suitInfo.symbol}</div>
       </div>
-      <div style={{ textAlign: 'center', fontSize: 20, color: suitInfo.color }}>{suitInfo.symbol}</div>
+      <div style={{ textAlign: 'center', fontSize: 20, color: suitInfo.card_color }}>{suitInfo.symbol}</div>
       <div style={{ transform: 'rotate(180deg)', alignSelf: 'flex-end', lineHeight: 1 }}>
-        <div style={{ fontSize: 14, fontWeight: 700, color: suitInfo.color, fontFamily:"'Cinzel',serif" }}>
+        <div style={{ fontSize: 14, fontWeight: 700, color: suitInfo.card_color, fontFamily:"'Cinzel',serif" }}>
           {VALUE_DISPLAY[value] || value}
         </div>
-        <div style={{ fontSize: 12, color: suitInfo.color }}>{suitInfo.symbol}</div>
+        <div style={{ fontSize: 12, color: suitInfo.card_color }}>{suitInfo.symbol}</div>
       </div>
     </div>
   );

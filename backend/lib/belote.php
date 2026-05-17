@@ -399,16 +399,18 @@ function checkBeloteRebelote(int $gameId, int $playerId, string $suit, string $v
     $other = ($value === 'K') ? 'Q' : 'K';
 
     // A-t-il l'autre carte de belote en main ?
+    $belote_possible = true;
+
     $stmt = $db->prepare('SELECT 1 FROM cards WHERE game_id=? AND player_id=? AND suit=? AND value=? AND status=\'hand\'');
     $stmt->execute([$gameId, $playerId, $trumpSuit, $other]);
-    if (!$stmt->fetchColumn()) return null;
+    if (!$stmt->fetchColumn()) $belote_possible = false;
 
     // Vérifier si belote déjà annoncée
     $game = $db->prepare('SELECT belote_player_id, rebelote_done FROM games WHERE id=?');
     $game->execute([$gameId]);
     $g = $game->fetch();
 
-    if (!$g['belote_player_id']) {
+    if (!$g['belote_player_id'] && $belote_possible) {
         return 'belote'; // première carte (Roi ou Dame)
     } elseif ($g['belote_player_id'] == $playerId && !$g['rebelote_done']) {
         return 'rebelote'; // deuxième carte
