@@ -24,6 +24,10 @@ async function apiFetch(endpoint, options = {}) {
 
   const data = await res.json();
   if (!data.success) {
+    if (data.code == 401){
+      localStorage.removeItem('belote_token');
+      localStorage.removeItem('belote_user');
+    }
     throw new Error(data.error || 'Erreur serveur');
   }
   return data;
