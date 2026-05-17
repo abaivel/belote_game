@@ -16,7 +16,7 @@ const SUIT_COLORS  = { hearts: '#c0392b', diamonds: '#c0392b', clubs: '#f5ead5',
 const SEAT_POSITIONS = [
   { top: '10%',  left: '50%', transform: 'translateX(-50%)' },
   { top: '50%', right: '1%', transform: 'translateY(-50%)' },
-  { bottom: '15%', left: '50%', transform: 'translateX(-50%)' },
+  { bottom: '130px', left: '50%', transform: 'translateX(-50%)' },
   { top: '50%', left: '1%',  transform: 'translateY(-50%)' },
 ];
 
@@ -238,10 +238,11 @@ export function GamePage({ gameId, gameCode, mySeat, onLeave }) {
 
               {/* Dos de cartes adverses */}
               {!isMe && cardCount > 0 && (
-                <div style={{ display: 'flex' }}>
+                <div style={{ display: 'flex', flexDirection: isHorizontal ? "column" : "row" }}>
                   {Array.from({ length: cardCount }).map((_, i) => (
                     <div key={i} style={{
-                      marginLeft: i === 0 ? 0 : -28,
+                      marginLeft: isHorizontal? 0 : (i === 0 ? 0 : -28),
+                      marginBottom: !isHorizontal ? 0 : -50,
                       transform: isHorizontal
                         ? `rotate(90deg)`
                         : `rotate(${(i - Math.floor(cardCount / 2)) * 3}deg)`,
@@ -358,7 +359,7 @@ export function GamePage({ gameId, gameCode, mySeat, onLeave }) {
 
         {/* ---- ENCHÈRES ---- */}
         {isBidding && (
-          <div style={{ position: 'relative', width: '100%', height: 0, marginTop: 200 }}>
+          <div style={{ position: 'relative', width: '100%', height: 'calc(100vh - 200px)', display: 'flex', flexDirection: 'column', justifyContent: 'center'}}>
             <BiddingPanel state={state} myPlayer={myPlayer} onBid={handleBid} loading={bidLoading} />
           </div>
         )}
@@ -414,7 +415,7 @@ export function GamePage({ gameId, gameCode, mySeat, onLeave }) {
             background: 'linear-gradient(to top, rgba(0,0,0,0.75) 0%, transparent 100%)',
             zIndex: 30,
           }}>
-            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'flex-end' }}>
+            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'flex-end', flexWrap: "wrap" }}>
               {sortCards(myCards, game.trumpSuit).map((card, i, arr) => {
                 const canPlay = isMyTurn && isPlaying;
                 return (

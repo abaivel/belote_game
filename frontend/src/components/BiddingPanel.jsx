@@ -46,7 +46,6 @@ export function BiddingPanel({ state, myPlayer, onBid, loading }) {
     // Positionné en haut de la table, pas en plein milieu, pour laisser les cartes visibles
     <div style={{
       position: 'absolute',
-      top: '8%',
       left: '50%',
       transform: 'translateX(-50%)',
       background: 'rgba(5,18,10,0.97)',

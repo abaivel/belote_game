@@ -53,7 +53,7 @@ export function LobbyPage({ onJoinGame }) {
   };
 
   const handleJoinAgain = async (game) => {
-    var seat = game.players_ids.split(",").indexOf(user.id.toString());
+    var seat = game.players_ids.split(", ").indexOf(user.id.toString());
     onJoinGame(game.id, game.code, seat, (seat)%2 +1);
   };
 
@@ -154,7 +154,7 @@ export function LobbyPage({ onJoinGame }) {
                     </span>
                     {g.status === 'waiting' && g.player_count < 4 ? (
                       <button onClick={() => handleJoin(g.code)} style={btnStyle('small')}>Rejoindre</button> ):
-                      (g.players_ids.split(",").includes(user.id.toString()) && <button onClick={() => handleJoinAgain(g)} style={btnStyle('small')}>Ouvrir</button>
+                      (g.players_ids.split(", ").includes(user.id.toString()) && <button onClick={() => handleJoinAgain(g)} style={btnStyle('small')}>Ouvrir</button>
                     )}
                   </div>
                 </div>
