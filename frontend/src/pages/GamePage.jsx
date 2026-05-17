@@ -44,6 +44,9 @@ export function GamePage({ gameId, gameCode, mySeat, onLeave }) {
   const fetchState = useCallback(async () => {
     try {
       const data = await api.gameState(gameId);
+      if (data.code != null && data.code == 401){
+        onLeave();
+      }
       setState(data);
       const trick = data.game.currentTrick;
       if (prevTrick.current !== -1 && prevTrick.current !== trick) {

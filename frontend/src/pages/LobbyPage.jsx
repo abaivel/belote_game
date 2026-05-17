@@ -26,6 +26,9 @@ export function LobbyPage({ onJoinGame }) {
   const loadGames = async () => {
     try {
       const data = await api.listGames();
+      if (data.code != null && data.code == 401){
+        logout();
+      }
       setGames(data.games);
       console.log(data.games[0].players_ids.split(","));
       console.log(data.games[0].players_ids.split(",").includes(user.id.toString()));
