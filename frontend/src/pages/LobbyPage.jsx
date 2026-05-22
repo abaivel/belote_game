@@ -93,7 +93,7 @@ export function LobbyPage({ onJoinGame }) {
         {/* Rejoindre par code */}
         <section style={{ marginBottom: 36 }}>
           <h2 style={sectionTitle}>Rejoindre par code</h2>
-          <div style={{ display: 'flex', gap: 10, marginTop: 12 }}>
+          <div style={{ display: 'flex', gap: 10, marginTop: 12, flexWrap: 'wrap' }}>
             <input
               value={code} onChange={e => setCode(e.target.value.toUpperCase())}
               placeholder="CODE"
@@ -106,6 +106,7 @@ export function LobbyPage({ onJoinGame }) {
                 borderRadius: 8, color: '#f5ead5',
                 fontSize: 18, fontFamily: "'Cinzel', serif",
                 letterSpacing: '0.3em', textAlign: 'center', outline: 'none',
+                minWidth: '100%'
               }}
               onFocus={e => e.target.style.borderColor = 'rgba(201,168,76,0.7)'}
               onBlur={e => e.target.style.borderColor = 'rgba(201,168,76,0.25)'}
@@ -134,6 +135,7 @@ export function LobbyPage({ onJoinGame }) {
                   background: 'rgba(255,255,255,0.04)',
                   border: '1px solid rgba(201,168,76,0.15)',
                   borderRadius: 8,
+                  flexWrap: 'wrap'
                 }}>
                   <div>
                     <span style={{ fontFamily: "'Cinzel', serif", color: '#c9a84c', letterSpacing: '0.15em', fontSize: 16 }}>
