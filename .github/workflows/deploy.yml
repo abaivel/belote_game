@@ -20,6 +20,11 @@ jobs:
 
       - name: 
         run: |
+          sed -i 's|/favicon.png|/belote/favicon.png|g' index.html
+        working-directory: frontend
+
+      - name: 
+        run: |
           sed -i 's|/backend/api|/belote/backend/api|g' api.js
         working-directory: frontend/src/utils
 
