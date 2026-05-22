@@ -63,7 +63,7 @@ export function LobbyPage({ onJoinGame }) {
   return (
     <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '40px 20px' }}>
       {/* Header */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%', maxWidth: 600, marginBottom: 40 }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%', maxWidth: 600, marginBottom: 40, flexWrap: 'wrap' }}>
         <div style={{ fontFamily: "'Cinzel', serif", fontSize: 28, color: '#c9a84c', letterSpacing: '0.1em' }}>
           ♠ BELOTE
         </div>
