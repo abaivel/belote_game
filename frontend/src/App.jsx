@@ -7,7 +7,6 @@ import { AuthProvider, useAuth } from './utils/auth.jsx';
 import { LoginPage } from './pages/LoginPage.jsx';
 import { LobbyPage } from './pages/LobbyPage.jsx';
 import { GamePage } from './pages/GamePage.jsx';
-import { BeloteGame } from './pages/BeloteGame.jsx';
 
 function AppRouter() {
   const { user } = useAuth();
@@ -44,9 +43,6 @@ function AppRouter() {
       onLeave={handleLeave}
     />
   );
-  /*return (
-    <BeloteGame apiUrl="/api.php" />
-  )*/
 }
 
 export default function App() {

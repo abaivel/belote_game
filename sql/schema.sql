@@ -63,6 +63,8 @@ CREATE TABLE IF NOT EXISTS `players` (
   `last_ping`    DATETIME NULL,               -- pour détecter déconnexion
   `is_connected` TINYINT(1) NOT NULL DEFAULT 1,
   `joined_at`    DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `nb_rounds_taken` INT UNSIGNED NOT NULL DEFAULT 0,
+  `nb_rounds_taken_won` INT UNSIGNED NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`),
   UNIQUE KEY `uq_game_seat` (`game_id`, `seat`),
   UNIQUE KEY `uq_game_user` (`game_id`, `user_id`),

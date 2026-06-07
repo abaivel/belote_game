@@ -338,6 +338,12 @@ function finalizeRound(int $gameId): array {
     $takerWins = $isCapot || ($takerPoints > $oppPoints);
 
     if ($takerWins) {
+        //TODO : Augmenter le nombre de parties gagnées du joueur qui a pris
+
+        $db->prepare(
+            'UPDATE players SET nb_rounds_taken_won=(SELECT nb_rounds_taken_won FROM players WHERE id = ?)+1 WHERE id=?'
+        )->execute([$g["trump_player_id"], $g["trump_player_id"]]);
+
         $team1pts = $scores[1] + ($beloteTeam === 1 ? $beloteBonus : 0);
         $team2pts = $scores[2] + ($beloteTeam === 2 ? $beloteBonus : 0);
         if ($isCapot) {

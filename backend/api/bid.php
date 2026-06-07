@@ -54,7 +54,7 @@ $proposedSuit = $g['bid_suit_proposed'];    // couleur de la carte retournée
 $bidOrderCount = (int)$g['bid_order_count'];
 
 // Helper pour recharger la liste des sièges
-$seatsStmt = $db->prepare('SELECT id, seat FROM players WHERE game_id=? ORDER BY seat');
+$seatsStmt = $db->prepare('SELECT id, seat, nb_rounds_taken FROM players WHERE game_id=? ORDER BY seat');
 $seatsStmt->execute([$gameId]);
 $seats  = $seatsStmt->fetchAll();
 $bySeat = [];
@@ -83,6 +83,11 @@ if ($action === 'take') {
     $db->prepare(
         'UPDATE games SET status=\'playing\', trump_suit=?, bid_team=?, trump_player_id=? WHERE id=?'
     )->execute([$chosenSuit, $bidTeam, $player['id'], $gameId]);
+
+    //TODO : incrementer le nombre de parties prises
+    $db->prepare(
+        'UPDATE players SET nb_rounds_taken=? WHERE id=?'
+    )->execute([$bySeat[$idToSeat[$player['id']]]["nb_rounds_taken"]+1, $player['id']]);
 
     // --- Phase 2 de la distribution ---
     // Récupérer les 11 cartes du talon dans l'ordre d'insertion

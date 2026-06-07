@@ -8,6 +8,7 @@ import { useAuth } from '../utils/auth.jsx';
 import { Card } from '../components/Card.jsx';
 import { BiddingPanel } from '../components/BiddingPanel.jsx';
 import { Chat } from '../components/Chat.jsx';
+import '../styles/GamePage.css';
 
 const SUIT_SYMBOLS = { hearts: '♥', diamonds: '♦', clubs: '♣', spades: '♠' };
 const SUIT_COLORS  = { hearts: '#c0392b', diamonds: '#c0392b', clubs: '#f5ead5', spades: '#f5ead5' };
@@ -399,6 +400,46 @@ export function GamePage({ gameId, gameCode, mySeat, onLeave }) {
                   </div>
                 </div>
               ))}
+            </div>
+            <div>
+              <div style={{ fontFamily: "'Cinzel', serif", fontSize: 18, color: '#c9a84c', marginBottom: 24 }}>
+                Statistiques
+              </div>
+              <p>Nombre de manches : {game.roundNumber}</p>
+              <table>
+                <tr>
+                  <td className='td-empty'></td>
+                  <th colspan="2">ÉQUIPE 1</th>
+                  <th colspan="2">ÉQUIPE 2</th>
+                </tr>
+                <tr>
+                  <td className="td-empty"></td>
+                  {players.filter(p => p.team == 1).map(p =>
+                    <th class="header">{p.pseudo}</th>
+                  )}
+                  {players.filter(p => p.team == 2).map(p =>
+                    <th class="header">{p.pseudo}</th>
+                  )}
+                </tr>
+
+                <tr>
+                  <th>Nombre de parties prises</th>
+                  <td>{players.filter(p => p.team == 1)[0].nb_rounds_taken}</td>
+                  <td>{players.filter(p => p.team == 1)[1].nb_rounds_taken}</td>
+                  <td>{players.filter(p => p.team == 2)[0].nb_rounds_taken}</td>
+                  <td>{players.filter(p => p.team == 2)[1].nb_rounds_taken}</td>
+                </tr>
+
+                <tr>
+                  <th>Nombre de parties prises gagnées</th>
+                  <td>{players.filter(p => p.team == 1)[0].nb_rounds_taken_won}</td>
+                  <td>{players.filter(p => p.team == 1)[1].nb_rounds_taken_won}</td>
+                  <td>{players.filter(p => p.team == 2)[0].nb_rounds_taken_won}</td>
+                  <td>{players.filter(p => p.team == 2)[1].nb_rounds_taken_won}</td>
+                </tr>
+
+                
+              </table>
             </div>
             <button onClick={handleLeave} style={{
               padding: '12px 28px', background: 'linear-gradient(135deg,#c9a84c,#e8c96d)',

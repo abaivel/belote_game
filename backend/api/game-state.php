@@ -34,7 +34,7 @@ if (!$g) error('Partie introuvable');
 
 // Joueurs
 $pStmt = $db->prepare(
-    'SELECT p.id, p.seat, p.team, p.is_connected, u.pseudo
+    'SELECT p.id, p.seat, p.team, p.is_connected, p.nb_rounds_taken, p.nb_rounds_taken_won, u.pseudo
      FROM players p JOIN users u ON p.user_id = u.id
      WHERE p.game_id = ? ORDER BY p.seat'
 );

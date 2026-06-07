@@ -85,6 +85,9 @@ if ($playOrder === 4) {
 
         if ($gameOver) {
             $db->prepare('UPDATE games SET status=\'finished\' WHERE id=?')->execute([$gameId]);
+            $db->prepare('DELETE FROM cards WHERE game_id=?')->execute([$gameId]);
+            $db->prepare('DELETE FROM bids WHERE game_id=?')->execute([$gameId]);
+            $db->prepare('DELETE FROM turns WHERE game_id=?')->execute([$gameId]);
         } else {
             // Nouvelle manche : changer le donneur et redistribuer
             $seatsStmt = $db->prepare('SELECT id, seat FROM players WHERE game_id=? ORDER BY seat');
