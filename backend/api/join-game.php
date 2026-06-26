@@ -121,7 +121,7 @@ if ($newCount === 4) {
     $db->prepare('UPDATE games SET status=\'bidding\', dealer_id=?, current_player_id=? WHERE id=?')
        ->execute([$dealerPlayerId, $firstBidderId, $game['id']]);
 
-    dealCards($game['id'], $orderedIds);
+    dealCards($game['id'],1, $orderedIds);
 }
 
 success(['gameId' => $game['id'], 'code' => $code, 'seat' => $seat, 'team' => $team]);

@@ -92,9 +92,9 @@ if ($action === 'take') {
     // --- Phase 2 de la distribution ---
     // Récupérer les 11 cartes du talon dans l'ordre d'insertion
     $talonStmt = $db->prepare(
-        'SELECT id FROM cards WHERE game_id=? AND status=\'talon\' ORDER BY id ASC'
+        'SELECT id FROM cards WHERE game_id=? AND round_num=? AND status=\'talon\' ORDER BY id ASC'
     );
-    $talonStmt->execute([$gameId]);
+    $talonStmt->execute([$gameId, $g["round_number"]]);
     $talonIds = array_column($talonStmt->fetchAll(), 'id');
 
     // Ordre de distribution phase 2 : commence par le joueur après le donneur
@@ -119,8 +119,8 @@ if ($action === 'take') {
     }
 
     $db->prepare(
-        'UPDATE cards SET player_id=?, status=\'hand\' WHERE game_id=? AND status=\'talon_visible\''
-    )->execute([$player['id'], $gameId]);
+        'UPDATE cards SET player_id=?, status=\'hand\' WHERE game_id=? AND round_num=? AND status=\'talon_visible\''
+    )->execute([$player['id'], $gameId, $g["round_number"]]);
     /*
     // Donner la carte retournée au preneur (tour 1) ou la mettre hors jeu (tour 2)
     if ($bidTurn === 1) {
@@ -184,22 +184,22 @@ if ($action === 'take') {
             $newDealerId   = $bySeat[$newDealerSeat]['id'];
             $newFirstBidder = $bySeat[($newDealerSeat + 1) % 4]['id'];
 
-            $db->prepare('DELETE FROM cards WHERE game_id=?')->execute([$gameId]);
-            $db->prepare('DELETE FROM bids WHERE game_id=?')->execute([$gameId]);
+            //$db->prepare('DELETE FROM cards WHERE game_id=?')->execute([$gameId]);
+            //$db->prepare('DELETE FROM bids WHERE game_id=?')->execute([$gameId]);
 
             // Réinitialiser l'état de la partie AVANT de redistribuer
             $db->prepare(
                 'UPDATE games SET status=\'bidding\', trump_suit=NULL, bid_team=NULL,
                  trump_player_id=NULL, bid_suit_proposed=NULL, bid_turn=1, bid_order_count=0,
-                 dealer_id=?, current_player_id=? WHERE id=?'
-            )->execute([$newDealerId, $newFirstBidder, $gameId]);
+                 dealer_id=?, current_player_id=?, round_number=? WHERE id=?'
+            )->execute([$newDealerId, $newFirstBidder,$g["round_number"]+1, $gameId]);
 
             // Redistribuer (écrit bid_suit_proposed avec la nouvelle carte retournée)
             $orderedIds = [];
             for ($i = 1; $i <= 4; $i++) {
                 $orderedIds[] = $bySeat[($newDealerSeat + $i) % 4]['id'];
             }
-            dealCards($gameId, $orderedIds);
+            dealCards($gameId,$g["round_number"]+1, $orderedIds);
 
             success(['status' => 'redeal', 'message' => 'Redistribution']);
         }

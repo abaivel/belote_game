@@ -34,7 +34,7 @@ if (!$g) error('Partie introuvable');
 
 // Joueurs
 $pStmt = $db->prepare(
-    'SELECT p.id, p.seat, p.team, p.is_connected, p.nb_rounds_taken, p.nb_rounds_taken_won, u.pseudo
+    'SELECT p.id, p.seat, p.team, p.is_connected, p.nb_rounds_taken, p.nb_rounds_taken_won, u.pseudo, u.id AS userId
      FROM players p JOIN users u ON p.user_id = u.id
      WHERE p.game_id = ? ORDER BY p.seat'
 );
@@ -50,8 +50,8 @@ foreach ($players as $p) {
 // Mes cartes en main
 $myCards = [];
 if ($myPlayer) {
-    $cStmt = $db->prepare('SELECT suit, value FROM cards WHERE game_id=? AND player_id=? AND status=\'hand\' ORDER BY suit, value');
-    $cStmt->execute([$gameId, $myPlayer['id']]);
+    $cStmt = $db->prepare('SELECT suit, value FROM cards WHERE game_id=? AND round_num=? AND player_id=? AND status=\'hand\' ORDER BY suit, value');
+    $cStmt->execute([$gameId, $g["round_number"], $myPlayer['id']]);
     $myCards = $cStmt->fetchAll();
 }
 
@@ -61,16 +61,16 @@ if ($g['status'] === 'playing') {
     $tcStmt = $db->prepare(
         'SELECT c.suit, c.value, c.play_order, p.seat
          FROM cards c JOIN players p ON c.player_id = p.id
-         WHERE c.game_id=? AND c.trick_num=? AND c.status=\'played\'
+         WHERE c.game_id=? AND round_num=? AND c.trick_num=? AND c.status=\'played\'
          ORDER BY c.play_order ASC'
     );
-    $tcStmt->execute([$gameId, $g['current_trick']]);
+    $tcStmt->execute([$gameId, $g["round_number"], $g['current_trick']]);
     $trickCards = $tcStmt->fetchAll();
 }
 
 // Historique des plis (pour score en cours)
-$tricksStmt = $db->prepare('SELECT winner_team, SUM(points) as pts FROM turns WHERE game_id=? AND completed=1 GROUP BY winner_team');
-$tricksStmt->execute([$gameId]);
+$tricksStmt = $db->prepare('SELECT winner_team, SUM(points) as pts FROM turns WHERE game_id=? AND round_num=? AND completed=1 GROUP BY winner_team');
+$tricksStmt->execute([$gameId, $g["round_number"]]);
 $trickScores = [1 => 0, 2 => 0];
 foreach ($tricksStmt->fetchAll() as $row) {
     $trickScores[(int)$row['winner_team']] = (int)$row['pts'];
@@ -78,8 +78,8 @@ foreach ($tricksStmt->fetchAll() as $row) {
 
 // Nombre de cartes par joueur (pour affichage dos de carte)
 $cardCounts = [];
-$ccStmt = $db->prepare('SELECT player_id, COUNT(*) as cnt FROM cards WHERE game_id=? AND status=\'hand\' GROUP BY player_id');
-$ccStmt->execute([$gameId]);
+$ccStmt = $db->prepare('SELECT player_id, COUNT(*) as cnt FROM cards WHERE game_id=? AND round_num=? AND status=\'hand\' GROUP BY player_id');
+$ccStmt->execute([$gameId, $g["round_number"]]);
 foreach ($ccStmt->fetchAll() as $row) {
     $cardCounts[(int)$row['player_id']] = (int)$row['cnt'];
 }
@@ -90,18 +90,18 @@ if ($g['current_trick'] > 0) {
     $ltStmt = $db->prepare(
         'SELECT c.suit, c.value, p.seat
          FROM cards c JOIN players p ON c.player_id = p.id
-         WHERE c.game_id=? AND c.trick_num=? AND c.status=\'trick_won\'
+         WHERE c.game_id=? AND round_num=? AND c.trick_num=? AND c.status=\'trick_won\'
          ORDER BY c.play_order ASC'
     );
-    $ltStmt->execute([$gameId, (int)$g['current_trick'] - 1]);
+    $ltStmt->execute([$gameId, $g["round_number"], (int)$g['current_trick'] - 1]);
     $lastTrick = $ltStmt->fetchAll();
 }
 
 // Carte retournée (visible pendant les enchères)
 $talonCard = null;
 if ($g['status'] === 'bidding') {
-    $tStmt = $db->prepare('SELECT suit, value FROM cards WHERE game_id=? AND status=\'talon_visible\' LIMIT 1');
-    $tStmt->execute([$gameId]);
+    $tStmt = $db->prepare('SELECT suit, value FROM cards WHERE game_id=? AND round_num=? AND status=\'talon_visible\' LIMIT 1');
+    $tStmt->execute([$gameId, $g["round_number"]]);
     $talonCard = $tStmt->fetch() ?: null;
 }
 

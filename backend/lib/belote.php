@@ -57,7 +57,7 @@ function createDeck(): array {
  * @param int   $gameId     ID de la partie
  * @param int[] $playerIds  IDs des players dans l'ordre de distribution
  */
-function dealCards(int $gameId, array $playerIds): void {
+function dealCards(int $gameId, int $round_num, array $playerIds): void {
     $db   = getDB();
     $deck = createDeck(); // 32 cartes mélangées
     $idx  = 0;
@@ -66,8 +66,8 @@ function dealCards(int $gameId, array $playerIds): void {
     foreach ($playerIds as $pid) {
         for ($i = 0; $i < 3; $i++) {
             $c = $deck[$idx++];
-            $db->prepare('INSERT INTO cards (game_id, player_id, suit, value, status) VALUES (?,?,?,?,\'hand\')')
-               ->execute([$gameId, $pid, $c['suit'], $c['value']]);
+            $db->prepare('INSERT INTO cards (game_id, round_num, player_id, suit, value, status) VALUES (?,?,?,?,?,\'hand\')')
+               ->execute([$gameId, $round_num, $pid, $c['suit'], $c['value']]);
         }
     }
 
@@ -75,22 +75,22 @@ function dealCards(int $gameId, array $playerIds): void {
     foreach ($playerIds as $pid) {
         for ($i = 0; $i < 2; $i++) {
             $c = $deck[$idx++];
-            $db->prepare('INSERT INTO cards (game_id, player_id, suit, value, status) VALUES (?,?,?,?,\'hand\')')
-               ->execute([$gameId, $pid, $c['suit'], $c['value']]);
+            $db->prepare('INSERT INTO cards (game_id, round_num, player_id, suit, value, status) VALUES (?,?,?,?,?,\'hand\')')
+               ->execute([$gameId, $round_num, $pid, $c['suit'], $c['value']]);
         }
     }
 
     // --- 21ème carte : retournée, visible de tous ---
     // Chaque joueur a 5 cartes, 1 est retournée → reste 11 cartes pour la phase 2
     $turned = $deck[$idx++]; // index 20
-    $db->prepare('INSERT INTO cards (game_id, player_id, suit, value, status) VALUES (?,NULL,?,?,\'talon_visible\')')
-       ->execute([$gameId, $turned['suit'], $turned['value']]);
+    $db->prepare('INSERT INTO cards (game_id, round_num, player_id, suit, value, status) VALUES (?,?,NULL,?,?,\'talon_visible\')')
+       ->execute([$gameId, $round_num, $turned['suit'], $turned['value']]);
 
     // Stocker les 11 cartes restantes dans le talon (distribuées après la prise)
     while ($idx < 32) {
         $c = $deck[$idx++];
-        $db->prepare('INSERT INTO cards (game_id, player_id, suit, value, status) VALUES (?,NULL,?,?,\'talon\')')
-           ->execute([$gameId, $c['suit'], $c['value']]);
+        $db->prepare('INSERT INTO cards (game_id, round_num, player_id, suit, value, status) VALUES (?,?,NULL,?,?,\'talon\')')
+           ->execute([$gameId, $round_num, $c['suit'], $c['value']]);
     }
 
     // Mémoriser la couleur proposée et l'ordre de distribution pour la phase 2
@@ -108,17 +108,19 @@ function isCardPlayable(int $gameId, int $playerId, string $suit, string $value,
     $db = getDB();
 
     // Cartes déjà jouées dans ce pli
-    $game = $db->prepare('SELECT current_trick FROM games WHERE id = ?');
+    $game = $db->prepare('SELECT current_trick, round_number FROM games WHERE id = ?');
     $game->execute([$gameId]);
-    $trickNum = (int)$game->fetchColumn();
+    $res = $game->fetch();
+    $trickNum = (int)$res["current_trick"];
+    $round_num = (int)$res["round_number"];
 
     $played = $db->prepare(
         'SELECT c.suit, c.value, c.player_id, p.team
          FROM cards c JOIN players p ON c.player_id = p.id
-         WHERE c.game_id = ? AND c.trick_num = ? AND c.status = \'played\'
+         WHERE c.game_id = ? AND c.round_num=? AND c.trick_num = ? AND c.status = \'played\'
          ORDER BY c.play_order ASC'
     );
-    $played->execute([$gameId, $trickNum]);
+    $played->execute([$gameId, $round_num, $trickNum]);
     $trickCards = $played->fetchAll();
 
     // Si on est le premier à jouer, toutes les cartes sont jouables
@@ -128,8 +130,8 @@ function isCardPlayable(int $gameId, int $playerId, string $suit, string $value,
     $leadCard = $trickCards[0];
 
     // Cartes en main du joueur
-    $hand = $db->prepare('SELECT suit, value FROM cards WHERE game_id = ? AND player_id = ? AND status = \'hand\'');
-    $hand->execute([$gameId, $playerId]);
+    $hand = $db->prepare('SELECT suit, value FROM cards WHERE game_id = ? AND round_num =? AND player_id = ? AND status = \'hand\'');
+    $hand->execute([$gameId, $round_num, $playerId]);
     $handCards = $hand->fetchAll();
 
     // La carte que le joueur veut jouer est-elle en main ?
@@ -263,17 +265,17 @@ function getPlayerTeam(int $gameId, int $playerId): int {
  * Calcule et enregistre le résultat d'un pli terminé
  * Retourne ['winner_player_id'=>..., 'winner_team'=>..., 'points'=>...]
  */
-function finalizeTrick(int $gameId, int $trickNum, string $trumpSuit): array {
+function finalizeTrick(int $gameId, int $round_num, int $trickNum, string $trumpSuit): array {
     $db = getDB();
 
     // Récupérer les cartes du pli avec infos joueur/équipe
     $stmt = $db->prepare(
         'SELECT c.suit, c.value, c.player_id, p.team
          FROM cards c JOIN players p ON c.player_id = p.id
-         WHERE c.game_id = ? AND c.trick_num = ?
+         WHERE c.game_id = ? AND c.round_num = ? AND c.trick_num = ?
          ORDER BY c.play_order ASC'
     );
-    $stmt->execute([$gameId, $trickNum]);
+    $stmt->execute([$gameId, $round_num, $trickNum]);
     $cards = $stmt->fetchAll();
 
     $isLast = ($trickNum === 7);
@@ -282,16 +284,16 @@ function finalizeTrick(int $gameId, int $trickNum, string $trumpSuit): array {
 
     // Enregistrer le pli
     $db->prepare(
-        'INSERT INTO turns (game_id, trick_num, winner_player_id, winner_team, points, completed)
-         VALUES (?,?,?,?,?,1)
+        'INSERT INTO turns (game_id, round_num, trick_num, winner_player_id, winner_team, points, completed)
+         VALUES (?,?,?,?,?,?,1)
          ON DUPLICATE KEY UPDATE winner_player_id=VALUES(winner_player_id),
          winner_team=VALUES(winner_team), points=VALUES(points), completed=1'
-    )->execute([$gameId, $trickNum, $winner['player_id'], $winner['team'], $points]);
+    )->execute([$gameId, $round_num, $trickNum, $winner['player_id'], $winner['team'], $points]);
 
     // Marquer les cartes comme trick_won
     $db->prepare(
-        'UPDATE cards SET status=\'trick_won\' WHERE game_id=? AND trick_num=?'
-    )->execute([$gameId, $trickNum]);
+        'UPDATE cards SET status=\'trick_won\' WHERE game_id=? AND round_num=? AND trick_num=?'
+    )->execute([$gameId, $round_num, $trickNum]);
 
     return [
         'winner_player_id' => $winner['player_id'],
@@ -315,8 +317,8 @@ function finalizeRound(int $gameId): array {
     $g = $game->fetch();
 
     // Points bruts par équipe (incluant le dix de der du dernier pli)
-    $stmt = $db->prepare('SELECT winner_team, SUM(points) as total FROM turns WHERE game_id=? AND completed=1 GROUP BY winner_team');
-    $stmt->execute([$gameId]);
+    $stmt = $db->prepare('SELECT winner_team, SUM(points) as total FROM turns WHERE game_id=? AND round_num=? AND completed=1 GROUP BY winner_team');
+    $stmt->execute([$gameId, $g["round_number"]]);
     $scores = [1 => 0, 2 => 0];
     foreach ($stmt->fetchAll() as $row) {
         $scores[(int)$row['winner_team']] = (int)$row['total'];
@@ -397,7 +399,7 @@ function roundBelote(int $pts): int {
 /**
  * Vérifie la belote/rebelote (Roi + Dame d'atout en main)
  */
-function checkBeloteRebelote(int $gameId, int $playerId, string $suit, string $value, string $trumpSuit): ?string {
+function checkBeloteRebelote(int $gameId, int $round_num, int $playerId, string $suit, string $value, string $trumpSuit): ?string {
     if ($suit !== $trumpSuit) return null;
     if ($value !== 'K' && $value !== 'Q') return null;
 
@@ -407,8 +409,8 @@ function checkBeloteRebelote(int $gameId, int $playerId, string $suit, string $v
     // A-t-il l'autre carte de belote en main ?
     $belote_possible = true;
 
-    $stmt = $db->prepare('SELECT 1 FROM cards WHERE game_id=? AND player_id=? AND suit=? AND value=? AND status=\'hand\'');
-    $stmt->execute([$gameId, $playerId, $trumpSuit, $other]);
+    $stmt = $db->prepare('SELECT 1 FROM cards WHERE game_id=? AND round_num=? AND player_id=? AND suit=? AND value=? AND status=\'hand\'');
+    $stmt->execute([$gameId, $round_num, $playerId, $trumpSuit, $other]);
     if (!$stmt->fetchColumn()) $belote_possible = false;
 
     // Vérifier si belote déjà annoncée

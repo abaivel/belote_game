@@ -5,8 +5,12 @@
 import { useState, useEffect } from 'react';
 import { api } from '../utils/api.js';
 import { useAuth } from '../utils/auth.jsx';
+import { ProfilePerso } from '../components/ProfilePerso.jsx';
+import { ProfileStats } from '../components/ProfileStats.jsx';
+import { DialogWindow } from '../components/DialogWindow.jsx';
+import '../styles/LobbyPage.css';
 
-const SEAT_NAMES = ['Nord', 'Est', 'Sud', 'Ouest'];
+//const SEAT_NAMES = ['Nord', 'Est', 'Sud', 'Ouest'];
 const STATUS_LABELS = { waiting: 'En attente', bidding: 'Enchères', playing: 'En cours', finished: 'Terminée' };
 
 export function LobbyPage({ onJoinGame }) {
@@ -15,7 +19,9 @@ export function LobbyPage({ onJoinGame }) {
   const [games, setGames] = useState([]);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  const [tab, setTab]     = useState('join'); // 'join' | 'list'
+  //const [tab, setTab]     = useState('join'); // 'join' | 'list'
+  const [isProfileOpen, setIsProfileOpen] = useState(false)
+  const [isProfileStatsOpen, setIsProfileStatsOpen] = useState(false)
 
   useEffect(() => {
     loadGames();
@@ -32,7 +38,9 @@ export function LobbyPage({ onJoinGame }) {
       setGames(data.games);
       console.log(data.games[0].players_ids.split(","));
       console.log(data.games[0].players_ids.split(",").includes(user.id.toString()));
-    } catch {}
+    } catch (error) {
+      console.error(error)
+    }
   };
 
   const handleCreate = async () => {
@@ -61,6 +69,18 @@ export function LobbyPage({ onJoinGame }) {
   };
 
   return (
+    <>
+      {isProfileOpen && (
+        <DialogWindow setOpen={setIsProfileOpen}>
+          <ProfilePerso setOpen={setIsProfileOpen} setNewPseudo={(p)=>user.pseudo = p } />
+        </DialogWindow>
+      )}
+
+      {isProfileStatsOpen && (
+        <DialogWindow setOpen={setIsProfileStatsOpen}>
+          <ProfileStats />
+        </DialogWindow>
+      )}
     <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '40px 20px' }}>
       {/* Header */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%', maxWidth: 600, marginBottom: 40, flexWrap: 'wrap' }}>
@@ -71,9 +91,16 @@ export function LobbyPage({ onJoinGame }) {
           <span style={{ color: 'rgba(245,234,213,0.7)', fontSize: 14 }}>
             Bonjour, <strong style={{ color: '#e8c96d' }}>{user?.pseudo}</strong>
           </span>
+          <span className="material-symbols-outlined" style={{color:"#e2c367",cursor: "pointer"}} onClick={()=>setIsProfileOpen(true)}>
+            person
+          </span>
+          <span className="material-symbols-outlined" style={{color:"#e2c367",cursor: "pointer"}} onClick={()=>setIsProfileStatsOpen(true)}>
+            leaderboard
+          </span>
           <button onClick={logout} style={btnStyle('ghost')}>Déconnexion</button>
         </div>
       </div>
+      
 
       {/* Panel principal */}
       <div style={panelStyle}>
@@ -173,8 +200,10 @@ export function LobbyPage({ onJoinGame }) {
             {error}
           </div>
         )}
+
       </div>
     </div>
+    </>
   );
 }
 

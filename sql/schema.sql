@@ -85,6 +85,7 @@ CREATE TABLE IF NOT EXISTS `cards` (
   `trick_num`   INT UNSIGNED NULL,           -- numéro du pli où elle a été jouée
   `play_order`  TINYINT UNSIGNED NULL,       -- ordre dans le pli (1-4)
   `played_at`   DATETIME NULL,
+  `round_num`   INT UNSIGNED NOT NULL,
   PRIMARY KEY (`id`),
   KEY `idx_game_player` (`game_id`, `player_id`),
   KEY `idx_game_trick` (`game_id`, `trick_num`)
@@ -102,6 +103,7 @@ CREATE TABLE IF NOT EXISTS `turns` (
   `points`      INT UNSIGNED NOT NULL DEFAULT 0,
   `completed`   TINYINT(1) NOT NULL DEFAULT 0,
   `created_at`  DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `round_num`   INT UNSIGNED NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `uq_game_trick` (`game_id`, `trick_num`),
   KEY `idx_game_id` (`game_id`)

@@ -48,12 +48,12 @@ if (!isCardPlayable($gameId, $player['id'], $suit, $value, $trumpSuit)) {
 
 // Compter les cartes dans ce pli
 $trickNum = (int)$g['current_trick'];
-$countStmt = $db->prepare('SELECT COUNT(*) FROM cards WHERE game_id=? AND trick_num=? AND status=\'played\'');
-$countStmt->execute([$gameId, $trickNum]);
+$countStmt = $db->prepare('SELECT COUNT(*) FROM cards WHERE game_id=? AND round_num=? AND trick_num=? AND status=\'played\'');
+$countStmt->execute([$gameId, $g["round_number"], $trickNum]);
 $playOrder = (int)$countStmt->fetchColumn() + 1;
 
 // Belote/Rebelote ?
-$beloteAnnounce = checkBeloteRebelote($gameId, $player['id'], $suit, $value, $trumpSuit);
+$beloteAnnounce = checkBeloteRebelote($gameId, $g["round_number"], $player['id'], $suit, $value, $trumpSuit);
 if ($beloteAnnounce === 'belote') {
     $db->prepare('UPDATE games SET belote_player_id=? WHERE id=?')->execute([$player['id'], $gameId]);
 } elseif ($beloteAnnounce === 'rebelote') {
@@ -63,14 +63,14 @@ if ($beloteAnnounce === 'belote') {
 // Jouer la carte
 $db->prepare(
     'UPDATE cards SET status=\'played\', trick_num=?, play_order=?, played_at=NOW()
-     WHERE game_id=? AND player_id=? AND suit=? AND value=? AND status=\'hand\''
-)->execute([$trickNum, $playOrder, $gameId, $player['id'], $suit, $value]);
+     WHERE game_id=? AND round_num=? AND player_id=? AND suit=? AND value=? AND status=\'hand\''
+)->execute([$trickNum, $playOrder, $gameId, $g["round_number"], $player['id'], $suit, $value]);
 
 $nextData = [];
 
 // Si 4 cartes jouées → terminer le pli
 if ($playOrder === 4) {
-    $result   = finalizeTrick($gameId, $trickNum, $trumpSuit);
+    $result   = finalizeTrick($gameId, $g["round_number"], $trickNum, $trumpSuit);
     $nextTrick = $trickNum + 1;
 
     if ($nextTrick >= 8) {
@@ -85,9 +85,9 @@ if ($playOrder === 4) {
 
         if ($gameOver) {
             $db->prepare('UPDATE games SET status=\'finished\' WHERE id=?')->execute([$gameId]);
-            $db->prepare('DELETE FROM cards WHERE game_id=?')->execute([$gameId]);
-            $db->prepare('DELETE FROM bids WHERE game_id=?')->execute([$gameId]);
-            $db->prepare('DELETE FROM turns WHERE game_id=?')->execute([$gameId]);
+            //$db->prepare('DELETE FROM cards WHERE game_id=?')->execute([$gameId]);
+            //$db->prepare('DELETE FROM bids WHERE game_id=?')->execute([$gameId]);
+            //$db->prepare('DELETE FROM turns WHERE game_id=?')->execute([$gameId]);
         } else {
             // Nouvelle manche : changer le donneur et redistribuer
             $seatsStmt = $db->prepare('SELECT id, seat FROM players WHERE game_id=? ORDER BY seat');
@@ -101,9 +101,9 @@ if ($playOrder === 4) {
             $newDealer      = $seatMap[$newDealerSeat];
             $newFirstBidder = $seatMap[($newDealerSeat + 1) % 4];
 
-            $db->prepare('DELETE FROM cards WHERE game_id=?')->execute([$gameId]);
-            $db->prepare('DELETE FROM bids WHERE game_id=?')->execute([$gameId]);
-            $db->prepare('DELETE FROM turns WHERE game_id=?')->execute([$gameId]);
+            //$db->prepare('DELETE FROM cards WHERE game_id=?')->execute([$gameId]);
+            //$db->prepare('DELETE FROM bids WHERE game_id=?')->execute([$gameId]);
+            //$db->prepare('DELETE FROM turns WHERE game_id=?')->execute([$gameId]);
 
             // Réinitialiser AVANT dealCards (qui va écrire bid_suit_proposed)
             $db->prepare(
@@ -115,7 +115,7 @@ if ($playOrder === 4) {
 
             $ordered = [];
             for ($i = 1; $i <= 4; $i++) $ordered[] = $seatMap[($newDealerSeat + $i) % 4];
-            dealCards($gameId, $ordered);
+            dealCards($gameId, $g["round_number"]+1, $ordered);
         }
 
         $nextData = ['roundOver' => true, 'scores' => $scores, 'gameOver' => $gameOver ?? false];

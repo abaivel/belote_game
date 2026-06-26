@@ -50,7 +50,7 @@ define('DISCONNECT_TIMEOUT', 30);
 define('DEBUG_MODE', true); // Mettre false en production
 
 // Origines autorisées pour CORS
-define('ALLOWED_ORIGIN', '*');
+define('ALLOWED_ORIGIN', $_ENV['ALLOWED_ORIGIN']);
 
 // ---- Gestionnaires d'erreurs globaux ----
 // Toute erreur/exception PHP renvoie du JSON au lieu d'une page HTML 500
