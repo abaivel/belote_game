@@ -52,7 +52,7 @@ export function GamePage({ gameId, gameCode, mySeat, onLeave }) {
         onLeave();
       }
       setState(data);
-      const trick = data.game.currentTrick;
+      const trick = data.round.currentTrick;
       if (prevTrick.current !== -1 && prevTrick.current !== trick) {
         setShowLT(true);
         setTimeout(() => setShowLT(false), 2500);
@@ -117,8 +117,8 @@ export function GamePage({ gameId, gameCode, mySeat, onLeave }) {
     );
   }
 
-  const { game, players, myPlayer, myCards, trickCards, lastTrick, cardCounts, messages } = state;
-  const isMyTurn   = myPlayer && game.currentPlayerId == myPlayer.id;
+  const { game, round, players, myPlayer, myCards, trickCards, lastTrick, cardCounts, messages } = state;
+  const isMyTurn   = myPlayer && round.currentPlayerId == myPlayer.id;
   const isBidding  = game.status === 'bidding';
   const isPlaying  = game.status === 'playing';
   const isWaiting  = game.status === 'waiting';
@@ -134,12 +134,12 @@ export function GamePage({ gameId, gameCode, mySeat, onLeave }) {
   displayCards.forEach(c => { trickBySeat[c.seat] = c; });
 
   // Qui a pris
-  const takerPlayer = game.trumpPlayerId
-    ? players.find(p => p.id == game.trumpPlayerId)
+  const takerPlayer = round.trumpPlayerId
+    ? players.find(p => p.id == round.trumpPlayerId)
     : null;
 
   // Trouver le pseudo du joueur courant (pour affichage)
-  //const currentPlayerName = players.find(p => p.id == game.currentPlayerId)?.pseudo || '?';
+  //const currentPlayerName = players.find(p => p.id == round.currentPlayerId)?.pseudo || '?';
 
   return (
     <>
@@ -173,9 +173,9 @@ export function GamePage({ gameId, gameCode, mySeat, onLeave }) {
               <ScoreDisplay label="Équipe 2" score={game.team2Score} total={game.team2Total} color={TEAM_COLORS[2].text} />
             </div>
             {/* Atout + preneur */}
-            {game.trumpSuit && (
+            {round.trumpSuit && (
               <div style={{ display: 'flex', gap: 8, alignItems: 'center', fontSize: 11 }}>
-                <span style={{ color: SUIT_COLORS[game.trumpSuit], fontSize: 16 }}>{SUIT_SYMBOLS[game.trumpSuit]}</span>
+                <span style={{ color: SUIT_COLORS[round.trumpSuit], fontSize: 16 }}>{SUIT_SYMBOLS[round.trumpSuit]}</span>
                 <span style={{ color: 'rgba(245,234,213,0.5)' }}>Atout</span>
                 {takerPlayer && (
                   <span style={{ color: '#c9a84c' }}>
@@ -212,7 +212,7 @@ export function GamePage({ gameId, gameCode, mySeat, onLeave }) {
             const p = playersBySeat[physSeat];
             if (!p) return null;
 
-            const isCurrentTurn = game.currentPlayerId == p.id;
+            const isCurrentTurn = round.currentPlayerId == p.id;
             const isMe = myPlayer?.id === p.id;
             const cardCount = cardCounts[p.id] || 0;
             const teamColor = TEAM_COLORS[p.team] || TEAM_COLORS[1];
@@ -469,7 +469,7 @@ export function GamePage({ gameId, gameCode, mySeat, onLeave }) {
               zIndex: 30,
             }}>
               <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'flex-end', flexWrap: "wrap" }}>
-                {sortCards(myCards, game.trumpSuit).map((card, i, arr) => {
+                {sortCards(myCards, round.trumpSuit).map((card, i, arr) => {
                   const canPlay = isMyTurn && isPlaying;
                   return (
                     <div key={`${card.suit}-${card.value}`} style={{

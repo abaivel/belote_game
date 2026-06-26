@@ -33,6 +33,12 @@ $g = $gStmt->fetch();
 if (!$g)                          error('Partie introuvable');
 if ($g['status'] !== 'bidding')   error('La partie n\'est pas en phase d\'enchères');
 
+// Charger le tour
+$rStmt = $db->prepare('SELECT * FROM rounds WHERE game_id = ? order by id desc limit 1');
+$rStmt->execute([$gameId]);
+$r = $rStmt->fetch();
+if (!$r) error('Tour introuvable');
+
 // ---- Joueur dans la partie ----
 $pStmt = $db->prepare('SELECT * FROM players WHERE game_id = ? AND user_id = ?');
 $pStmt->execute([$gameId, $user['id']]);
@@ -40,7 +46,7 @@ $player = $pStmt->fetch();
 if (!$player) error('Vous n\'êtes pas dans cette partie');
 
 // ---- C'est bien son tour ? ----
-if ((int)$g['current_player_id'] !== (int)$player['id']) {
+if ((int)$r['current_player_id'] !== (int)$player['id']) {
     error('Ce n\'est pas votre tour');
 }
 
@@ -49,9 +55,9 @@ if (!in_array($action, ['pass', 'take'])) {
     error('Action invalide (pass ou take)');
 }
 
-$bidTurn      = (int)$g['bid_turn'];        // 1 ou 2
-$proposedSuit = $g['bid_suit_proposed'];    // couleur de la carte retournée
-$bidOrderCount = (int)$g['bid_order_count'];
+$bidTurn      = (int)$r['bid_turn'];        // 1 ou 2
+$proposedSuit = $r['bid_suit_proposed'];    // couleur de la carte retournée
+$bidOrderCount = (int)$r['bid_order_count'];
 
 // Helper pour recharger la liste des sièges
 $seatsStmt = $db->prepare('SELECT id, seat, nb_rounds_taken FROM players WHERE game_id=? ORDER BY seat');
@@ -81,8 +87,12 @@ if ($action === 'take') {
 
     // Fixer l'atout et passer en 'playing'
     $db->prepare(
-        'UPDATE games SET status=\'playing\', trump_suit=?, bid_team=?, trump_player_id=? WHERE id=?'
-    )->execute([$chosenSuit, $bidTeam, $player['id'], $gameId]);
+        'UPDATE games SET status=\'playing\' WHERE id=?'
+    )->execute([$gameId]);
+
+    $db->prepare(
+        'UPDATE rounds SET trump_suit=?, bid_team=?, trump_player_id=? WHERE id=?'
+    )->execute([$chosenSuit, $bidTeam, $player['id'], $r['id']]);
 
     //TODO : incrementer le nombre de parties prises
     $db->prepare(
@@ -92,9 +102,9 @@ if ($action === 'take') {
     // --- Phase 2 de la distribution ---
     // Récupérer les 11 cartes du talon dans l'ordre d'insertion
     $talonStmt = $db->prepare(
-        'SELECT id FROM cards WHERE game_id=? AND round_num=? AND status=\'talon\' ORDER BY id ASC'
+        'SELECT id FROM cards WHERE round_id=? AND status=\'talon\' ORDER BY id ASC'
     );
-    $talonStmt->execute([$gameId, $g["round_number"]]);
+    $talonStmt->execute([$r["id"]]);
     $talonIds = array_column($talonStmt->fetchAll(), 'id');
 
     // Ordre de distribution phase 2 : commence par le joueur après le donneur
@@ -119,8 +129,8 @@ if ($action === 'take') {
     }
 
     $db->prepare(
-        'UPDATE cards SET player_id=?, status=\'hand\' WHERE game_id=? AND round_num=? AND status=\'talon_visible\''
-    )->execute([$player['id'], $gameId, $g["round_number"]]);
+        'UPDATE cards SET player_id=?, status=\'hand\' WHERE round_id=? AND status=\'talon_visible\''
+    )->execute([$player['id'], $r["id"]]);
     /*
     // Donner la carte retournée au preneur (tour 1) ou la mettre hors jeu (tour 2)
     if ($bidTurn === 1) {
@@ -140,8 +150,8 @@ if ($action === 'take') {
     }
     $firstPlayerId = $bySeat[($dealerSeat + 1) % 4]['id'];
 
-    $db->prepare('UPDATE games SET current_player_id=?, current_trick=0 WHERE id=?')
-       ->execute([$firstPlayerId, $gameId]);
+    $db->prepare('UPDATE rounds SET current_player_id=?, current_trick=0 WHERE id=?')
+       ->execute([$firstPlayerId, $r["id"]]);
 
     success([
         'status'     => 'playing',
@@ -169,8 +179,8 @@ if ($action === 'take') {
             $firstTurn2Id = $bySeat[($dealerSeat + 1) % 4]['id'];
 
             $db->prepare(
-                'UPDATE games SET bid_turn=2, bid_order_count=0, current_player_id=? WHERE id=?'
-            )->execute([$firstTurn2Id, $gameId]);
+                'UPDATE rounds SET bid_turn=2, bid_order_count=0, current_player_id=? WHERE id=?'
+            )->execute([$firstTurn2Id, $r["id"]]);
 
             success(['status' => 'bidding', 'bidTurn' => 2]);
 
@@ -188,26 +198,30 @@ if ($action === 'take') {
             //$db->prepare('DELETE FROM bids WHERE game_id=?')->execute([$gameId]);
 
             // Réinitialiser l'état de la partie AVANT de redistribuer
+
+            $db->prepare('INSERT INTO rounds (game_id, dealer_id, current_player_id) VALUES (?,?,?)')
+            ->execute([$gameId,$newDealerId, $newFirstBidder]);
+
+            $roundId = (int)$db->lastInsertId();
+
             $db->prepare(
-                'UPDATE games SET status=\'bidding\', trump_suit=NULL, bid_team=NULL,
-                 trump_player_id=NULL, bid_suit_proposed=NULL, bid_turn=1, bid_order_count=0,
-                 dealer_id=?, current_player_id=?, round_number=? WHERE id=?'
-            )->execute([$newDealerId, $newFirstBidder,$g["round_number"]+1, $gameId]);
+                'UPDATE games SET status=\'bidding\' WHERE id=?'
+            )->execute([$gameId]);
 
             // Redistribuer (écrit bid_suit_proposed avec la nouvelle carte retournée)
             $orderedIds = [];
             for ($i = 1; $i <= 4; $i++) {
                 $orderedIds[] = $bySeat[($newDealerSeat + $i) % 4]['id'];
             }
-            dealCards($gameId,$g["round_number"]+1, $orderedIds);
+            dealCards($r["id"], $orderedIds);
 
             success(['status' => 'redeal', 'message' => 'Redistribution']);
         }
     } else {
         // Prochain joueur
         $db->prepare(
-            'UPDATE games SET bid_order_count=?, current_player_id=? WHERE id=?'
-        )->execute([$newCount, $nextPlayerId, $gameId]);
+            'UPDATE rounds SET bid_order_count=?, current_player_id=? WHERE id=?'
+        )->execute([$newCount, $nextPlayerId, $r["id"]]);
 
         success(['status' => 'bidding', 'bidTurn' => $bidTurn, 'nextPlayer' => $nextPlayerId]);
     }

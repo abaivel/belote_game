@@ -32,6 +32,12 @@ $gStmt->execute([$gameId]);
 $g = $gStmt->fetch();
 if (!$g) error('Partie introuvable');
 
+// Charger le tour
+$rStmt = $db->prepare('SELECT * FROM rounds WHERE game_id = ? order by id desc limit 1');
+$rStmt->execute([$gameId]);
+$r = $rStmt->fetch();
+if (!$r) error('Tour introuvable');
+
 // Joueurs
 $pStmt = $db->prepare(
     'SELECT p.id, p.seat, p.team, p.is_connected, p.nb_rounds_taken, p.nb_rounds_taken_won, u.pseudo, u.id AS userId
@@ -50,8 +56,8 @@ foreach ($players as $p) {
 // Mes cartes en main
 $myCards = [];
 if ($myPlayer) {
-    $cStmt = $db->prepare('SELECT suit, value FROM cards WHERE game_id=? AND round_num=? AND player_id=? AND status=\'hand\' ORDER BY suit, value');
-    $cStmt->execute([$gameId, $g["round_number"], $myPlayer['id']]);
+    $cStmt = $db->prepare('SELECT suit, value FROM cards WHERE round_id=? AND player_id=? AND status=\'hand\' ORDER BY suit, value');
+    $cStmt->execute([$r["id"], $myPlayer['id']]);
     $myCards = $cStmt->fetchAll();
 }
 
@@ -61,16 +67,16 @@ if ($g['status'] === 'playing') {
     $tcStmt = $db->prepare(
         'SELECT c.suit, c.value, c.play_order, p.seat
          FROM cards c JOIN players p ON c.player_id = p.id
-         WHERE c.game_id=? AND round_num=? AND c.trick_num=? AND c.status=\'played\'
+         WHERE c.round_id=? AND c.trick_num=? AND c.status=\'played\'
          ORDER BY c.play_order ASC'
     );
-    $tcStmt->execute([$gameId, $g["round_number"], $g['current_trick']]);
+    $tcStmt->execute([$r["id"], $r['current_trick']]);
     $trickCards = $tcStmt->fetchAll();
 }
 
 // Historique des plis (pour score en cours)
-$tricksStmt = $db->prepare('SELECT winner_team, SUM(points) as pts FROM turns WHERE game_id=? AND round_num=? AND completed=1 GROUP BY winner_team');
-$tricksStmt->execute([$gameId, $g["round_number"]]);
+$tricksStmt = $db->prepare('SELECT winner_team, SUM(points) as pts FROM turns WHERE round_id=? AND completed=1 GROUP BY winner_team');
+$tricksStmt->execute([$r["id"]]);
 $trickScores = [1 => 0, 2 => 0];
 foreach ($tricksStmt->fetchAll() as $row) {
     $trickScores[(int)$row['winner_team']] = (int)$row['pts'];
@@ -78,8 +84,8 @@ foreach ($tricksStmt->fetchAll() as $row) {
 
 // Nombre de cartes par joueur (pour affichage dos de carte)
 $cardCounts = [];
-$ccStmt = $db->prepare('SELECT player_id, COUNT(*) as cnt FROM cards WHERE game_id=? AND round_num=? AND status=\'hand\' GROUP BY player_id');
-$ccStmt->execute([$gameId, $g["round_number"]]);
+$ccStmt = $db->prepare('SELECT player_id, COUNT(*) as cnt FROM cards WHERE round_id=? AND status=\'hand\' GROUP BY player_id');
+$ccStmt->execute([$r["id"]]);
 foreach ($ccStmt->fetchAll() as $row) {
     $cardCounts[(int)$row['player_id']] = (int)$row['cnt'];
 }
@@ -90,20 +96,35 @@ if ($g['current_trick'] > 0) {
     $ltStmt = $db->prepare(
         'SELECT c.suit, c.value, p.seat
          FROM cards c JOIN players p ON c.player_id = p.id
-         WHERE c.game_id=? AND round_num=? AND c.trick_num=? AND c.status=\'trick_won\'
+         WHERE c.round_id=? AND c.trick_num=? AND c.status=\'trick_won\'
          ORDER BY c.play_order ASC'
     );
-    $ltStmt->execute([$gameId, $g["round_number"], (int)$g['current_trick'] - 1]);
+    $ltStmt->execute([$r["id"], (int)$g['current_trick'] - 1]);
     $lastTrick = $ltStmt->fetchAll();
 }
 
 // Carte retournée (visible pendant les enchères)
 $talonCard = null;
 if ($g['status'] === 'bidding') {
-    $tStmt = $db->prepare('SELECT suit, value FROM cards WHERE game_id=? AND round_num=? AND status=\'talon_visible\' LIMIT 1');
-    $tStmt->execute([$gameId, $g["round_number"]]);
+    $tStmt = $db->prepare('SELECT suit, value FROM cards WHERE round_id=? AND status=\'talon_visible\' LIMIT 1');
+    $tStmt->execute([$r["id"]]);
     $talonCard = $tStmt->fetch() ?: null;
 }
+
+// Récuperer le numéro de la manche en cours
+$nbRoundsStmt = $db->prepare('SELECT COUNT(*) FROM rounds WHERE game_id=?');
+$nbRoundsStmt->execute([$gameId]);
+$nbRounds = $nbRoundsStmt->fetchColumn();
+
+// Récuperer les scores des équipes de la partie précédente
+$previousRoundScoresStmt = $db->prepare('SELECT team1_score, team2_score FROM rounds WHERE game_id=? ORDER BY id LIMIT 1 OFFSET 1');
+$previousRoundScoresStmt->execute([$gameId]);
+$previousRoundScores = $previousRoundScoresStmt->fetch();
+
+// Récuperer les scores totals des équipes
+$totalScoresStmt = $db->prepare('SELECT SUM(team1_score) AS team1_total_score, SUM(team2_score) AS team2_total_score FROM rounds WHERE game_id=?');
+$totalScoresStmt->execute([$gameId]);
+$totalScores = $totalScoresStmt->fetch();
 
 // Messages récents (50 derniers)
 $msgStmt = $db->prepare('SELECT pseudo, content, created_at FROM messages WHERE game_id=? ORDER BY created_at DESC LIMIT 50');
@@ -116,21 +137,26 @@ success([
         'id'              => $g['id'],
         'code'            => $g['code'],
         'status'          => $g['status'],
-        'trumpSuit'       => $g['trump_suit'],
-        'trumpPlayerId'   => $g['trump_player_id'],
-        'bidSuitProposed' => $g['bid_suit_proposed'],
-        'bidTurn'         => (int)($g['bid_turn'] ?? 1),
-        'bidTeam'         => $g['bid_team'],
-        'currentTrick'    => $g['current_trick'],
-        'currentPlayerId' => $g['current_player_id'],
-        'dealerId'        => $g['dealer_id'],
-        'team1Score'      => $g['team1_score'],
-        'team2Score'      => $g['team2_score'],
-        'team1Total'      => $g['team1_total'],
-        'team2Total'      => $g['team2_total'],
-        'belotePlayerId'  => $g['belote_player_id'],
-        'rebeloteDone'    => (bool)$g['rebelote_done'],
-        'roundNumber'     => $g['round_number'],
+        'team1_score'     => $previousRoundScores['team1_score'],
+        'team2_score'     => $previousRoundScores['team2_score'],
+        'team1_total'     => $totalScores['team1_total_score'],
+        'team2_total'     => $totalScores['team2_total_score'],
+        'round_number'    => $nbRounds,
+    ],
+    'round' => [
+        'id'              => $r['id'],
+        'trumpSuit'       => $r['trump_suit'],
+        'trumpPlayerId'   => $r['trump_player_id'],
+        'bidSuitProposed' => $r['bid_suit_proposed'],
+        'bidTurn'         => (int)($r['bid_turn'] ?? 1),
+        'bidTeam'         => $r['bid_team'],
+        'currentTrick'    => $r['current_trick'],
+        'currentPlayerId' => $r['current_player_id'],
+        'dealerId'        => $r['dealer_id'],
+        'team1Score'      => $r['team1_score'],
+        'team2Score'      => $r['team2_score'],
+        'belotePlayerId'  => $r['belote_player_id'],
+        'rebeloteDone'    => (bool)$r['rebelote_done'],
     ],
     'players'       => $players,
     'myPlayer'      => $myPlayer,

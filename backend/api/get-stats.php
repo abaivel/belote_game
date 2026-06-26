@@ -14,7 +14,22 @@ if (!$userId) error('userId requis');
 
 $db = getDB();
 
-$total_rounds = $db->prepare('SELECT IFNULL(SUM(g.round_number), 0) AS total_rounds, IFNULL(SUM(p.nb_rounds_taken), 0) AS total_rounds_taken, IFNULL(SUM(p.nb_rounds_taken_won), 0) AS total_rounds_taken_won FROM games g, players p WHERE g.id = p.game_id AND p.user_id = ?');
-$total_rounds->execute([$userId]);
+$totalRoundsTakenWonStmt = $db->prepare('SELECT COUNT(*) AS total_games, IFNULL(SUM(p.nb_rounds_taken), 0) AS total_rounds_taken, IFNULL(SUM(p.nb_rounds_taken_won), 0) AS total_rounds_taken_won FROM players p, games g WHERE p.game_id = g.Id AND g.s p.user_id = ?');
+$totalRoundsTakenWonStmt->execute([$userId]);
+$totalRoundsTakenWon = $totalRoundsTakenWonStmt->fetch();
 
-success(['stats' => $total_rounds->fetch()]);
+$totalRoundsPlayedStmt = $db->prepare('SELECT IFNULL(COUNT(*), 0) AS total_rounds FROM rounds r, players p WHERE r.game_id = p.game_id AND p.user_id = ?');
+$totalRoundsPlayedStmt->execute([$userId]);
+$totalRoundsPlayed = $totalRoundsPlayedStmt->fetchColumn();
+
+
+
+
+
+
+success(['stats' => [
+    'total_games'=> $totalRoundsTakenWon["total_games"],
+    'total_rounds' => $totalRoundsPlayed,
+    'total_rounds_taken'=> $totalRoundsTakenWon["total_rounds_taken"],
+    "total_rounds_taken_won"=> $totalRoundsPlayedWon["total_rounds_taken_won"],
+]]);
