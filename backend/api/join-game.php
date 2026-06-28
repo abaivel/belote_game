@@ -118,15 +118,17 @@ if ($newCount === 4) {
         $orderedIds[] = $bySeat[($dealerSeat + $i) % 4]['id'];
     }
 
-    $db->prepare('INSERT INTO rounds (game_id, dealer_id, current_player_id) VALUES (?,?,?)')
-   ->execute([$game['id'],$dealerPlayerId, $firstBidderId]);
+    $firstRoundStmt = $db->prepare("SELECT id FROM rounds WHERE game_id=? limit 1");
+    $firstRoundStmt->execute([$game['id']]);
+    $firstRoundId = $firstRoundStmt->fetchColumn();
 
-    $roundId = (int)$db->lastInsertId();
+    $db->prepare('UPDATE rounds SET dealer_id=?, current_player_id=? WHERE id=?')
+   ->execute([$dealerPlayerId, $firstBidderId,$firstRoundId]);
 
     $db->prepare('UPDATE games SET status=\'bidding\' WHERE id=?')
        ->execute([$game['id']]);
 
-    dealCards($roundId, $orderedIds);
+    dealCards($firstRoundId, $orderedIds);
 }
 
 success(['gameId' => $game['id'], 'code' => $code, 'seat' => $seat, 'team' => $team]);

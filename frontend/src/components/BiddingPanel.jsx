@@ -19,14 +19,14 @@ const SUITS = ['hearts', 'diamonds', 'clubs', 'spades'];
 const VALUE_DISPLAY = { '7':'7','8':'8','9':'9','10':'10','J':'V','Q':'D','K':'R','A':'A' };
 
 export function BiddingPanel({ state, myPlayer, onBid, loading }) {
-  const { game, players, talonCard } = state;
+  const { game, round, players, talonCard } = state;
   const [selectedSuit, setSelectedSuit] = useState(null);
   const [error, setError]               = useState('');
 
-  const isMyTurn = myPlayer && game.currentPlayerId == myPlayer.id;
-  const bidTurn  = game.bidTurn || 1;
-  const proposed = game.bidSuitProposed;
-  const currentPlayerName = players?.find(p => p.id == game.currentPlayerId)?.pseudo || '?';
+  const isMyTurn = myPlayer && round.currentPlayerId == myPlayer.id;
+  const bidTurn  = round.bidTurn || 1;
+  const proposed = round.bidSuitProposed;
+  const currentPlayerName = players?.find(p => p.id == round.currentPlayerId)?.pseudo || '?';
 
   const handleTake = async () => {
     const suit = bidTurn === 1 ? proposed : selectedSuit;

@@ -27,7 +27,7 @@ CREATE TABLE IF NOT EXISTS `games` (
   `id`              INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `code`            VARCHAR(8)   NOT NULL,          -- code d'accès 6 chars
   `status`          ENUM('waiting','bidding','playing','finished') NOT NULL DEFAULT 'waiting',
-  'winner_team'     TINYINT UNSIGNED NULL,
+  `winner_team`     TINYINT UNSIGNED NULL,
   `created_at`      DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at`      DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),

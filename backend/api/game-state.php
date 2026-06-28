@@ -92,14 +92,14 @@ foreach ($ccStmt->fetchAll() as $row) {
 
 // Dernier pli (pour affichage temporaire)
 $lastTrick = [];
-if ($g['current_trick'] > 0) {
+if ($r['current_trick'] > 0) {
     $ltStmt = $db->prepare(
         'SELECT c.suit, c.value, p.seat
          FROM cards c JOIN players p ON c.player_id = p.id
          WHERE c.round_id=? AND c.trick_num=? AND c.status=\'trick_won\'
          ORDER BY c.play_order ASC'
     );
-    $ltStmt->execute([$r["id"], (int)$g['current_trick'] - 1]);
+    $ltStmt->execute([$r["id"], (int)$r['current_trick'] - 1]);
     $lastTrick = $ltStmt->fetchAll();
 }
 
@@ -117,9 +117,13 @@ $nbRoundsStmt->execute([$gameId]);
 $nbRounds = $nbRoundsStmt->fetchColumn();
 
 // Récuperer les scores des équipes de la partie précédente
-$previousRoundScoresStmt = $db->prepare('SELECT team1_score, team2_score FROM rounds WHERE game_id=? ORDER BY id LIMIT 1 OFFSET 1');
+$previousRoundScoresStmt = $db->prepare('SELECT team1_score, team2_score FROM rounds WHERE game_id=? AND (team1_score!=0 OR team2_score!=0) ORDER BY id DESC LIMIT 1');
 $previousRoundScoresStmt->execute([$gameId]);
 $previousRoundScores = $previousRoundScoresStmt->fetch();
+
+if (!$previousRoundScores){
+    $previousRoundScores = ['team1_score' => 0, 'team2_score' => 0];
+}
 
 // Récuperer les scores totals des équipes
 $totalScoresStmt = $db->prepare('SELECT SUM(team1_score) AS team1_total_score, SUM(team2_score) AS team2_total_score FROM rounds WHERE game_id=?');
@@ -137,11 +141,11 @@ success([
         'id'              => $g['id'],
         'code'            => $g['code'],
         'status'          => $g['status'],
-        'team1_score'     => $previousRoundScores['team1_score'],
-        'team2_score'     => $previousRoundScores['team2_score'],
-        'team1_total'     => $totalScores['team1_total_score'],
-        'team2_total'     => $totalScores['team2_total_score'],
-        'round_number'    => $nbRounds,
+        'team1Score'     => $previousRoundScores['team1_score'],
+        'team2Score'     => $previousRoundScores['team2_score'],
+        'team1Total'     => $totalScores['team1_total_score'],
+        'team2Total'     => $totalScores['team2_total_score'],
+        'roundNumber'    => $nbRounds,
     ],
     'round' => [
         'id'              => $r['id'],

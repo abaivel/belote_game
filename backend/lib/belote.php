@@ -315,8 +315,8 @@ function finalizeRound(int $roundId): array {
     $r = $round->fetch();
 
     // Points bruts par équipe (incluant le dix de der du dernier pli)
-    $stmt = $db->prepare('SELECT winner_team, SUM(points) as total FROM turns WHERE round_id=? AND round_num=? AND completed=1 GROUP BY winner_team');
-    $stmt->execute([$roundId, $r["round_number"]]);
+    $stmt = $db->prepare('SELECT winner_team, SUM(points) as total FROM turns WHERE round_id=? AND completed=1 GROUP BY winner_team');
+    $stmt->execute([$roundId]);
     $scores = [1 => 0, 2 => 0];
     foreach ($stmt->fetchAll() as $row) {
         $scores[(int)$row['winner_team']] = (int)$row['total'];
@@ -369,7 +369,7 @@ function finalizeRound(int $roundId): array {
     $team2pts = roundBelote($team2pts);*/
 
     // Mettre à jour les scores
-    $db->prepare('UPDATE round SET team1_score=?, team2_score=? WHERE id=?')
+    $db->prepare('UPDATE rounds SET team1_score=?, team2_score=? WHERE id=?')
        ->execute([$team1pts, $team2pts, $roundId]);
 
     return [
@@ -404,7 +404,7 @@ function checkBeloteRebelote(int $roundId, int $playerId, string $suit, string $
     if (!$stmt->fetchColumn()) $belote_possible = false;
 
     // Vérifier si belote déjà annoncée
-    $round = $db->prepare('SELECT belote_player_id, rebelote_done FROM round WHERE id=?');
+    $round = $db->prepare('SELECT belote_player_id, rebelote_done FROM rounds WHERE id=?');
     $round->execute([$roundId]);
     $r = $round->fetch();
 

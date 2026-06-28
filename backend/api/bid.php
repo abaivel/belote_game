@@ -110,7 +110,7 @@ if ($action === 'take') {
     // Ordre de distribution phase 2 : commence par le joueur après le donneur
     $dealerSeatP2 = null;
     foreach ($bySeat as $seatNum => $pl) {
-        if ($pl['id'] == $g['dealer_id']) { $dealerSeatP2 = $seatNum; break; }
+        if ($pl['id'] == $r['dealer_id']) { $dealerSeatP2 = $seatNum; break; }
     }
     $orderedP2 = [];
     for ($i = 1; $i <= 4; $i++) {
@@ -146,7 +146,7 @@ if ($action === 'take') {
     // Le joueur à gauche du donneur commence à jouer
     $dealerSeat = null;
     foreach ($bySeat as $seatNum => $pl) {
-        if ($pl['id'] == $g['dealer_id']) { $dealerSeat = $seatNum; break; }
+        if ($pl['id'] == $r['dealer_id']) { $dealerSeat = $seatNum; break; }
     }
     $firstPlayerId = $bySeat[($dealerSeat + 1) % 4]['id'];
 
@@ -174,7 +174,7 @@ if ($action === 'take') {
             // Passer au tour 2
             $dealerSeat = null;
             foreach ($bySeat as $seatNum => $pl) {
-                if ($pl['id'] == $g['dealer_id']) { $dealerSeat = $seatNum; break; }
+                if ($pl['id'] == $r['dealer_id']) { $dealerSeat = $seatNum; break; }
             }
             $firstTurn2Id = $bySeat[($dealerSeat + 1) % 4]['id'];
 
@@ -188,7 +188,7 @@ if ($action === 'take') {
             // Tour 2 : tout le monde a passé → redistribuer, donneur suivant
             $dealerSeat = null;
             foreach ($bySeat as $seatNum => $pl) {
-                if ($pl['id'] == $g['dealer_id']) { $dealerSeat = $seatNum; break; }
+                if ($pl['id'] == $r['dealer_id']) { $dealerSeat = $seatNum; break; }
             }
             $newDealerSeat = ($dealerSeat + 1) % 4;
             $newDealerId   = $bySeat[$newDealerSeat]['id'];
@@ -213,7 +213,7 @@ if ($action === 'take') {
             for ($i = 1; $i <= 4; $i++) {
                 $orderedIds[] = $bySeat[($newDealerSeat + $i) % 4]['id'];
             }
-            dealCards($r["id"], $orderedIds);
+            dealCards($roundId, $orderedIds);
 
             success(['status' => 'redeal', 'message' => 'Redistribution']);
         }

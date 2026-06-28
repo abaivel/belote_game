@@ -108,7 +108,7 @@ if ($playOrder === 4) {
             $seatMap  = array_column($seats, 'id', 'seat');
             $idToSeat = array_flip($seatMap);
 
-            $oldDealerSeat  = $idToSeat[(int)$g['dealer_id']];
+            $oldDealerSeat  = $idToSeat[(int)$r['dealer_id']];
             $newDealerSeat  = ($oldDealerSeat + 1) % 4;
             $newDealer      = $seatMap[$newDealerSeat];
             $newFirstBidder = $seatMap[($newDealerSeat + 1) % 4];
@@ -120,7 +120,7 @@ if ($playOrder === 4) {
             // Réinitialiser AVANT dealCards (qui va écrire bid_suit_proposed)
 
             $db->prepare('INSERT INTO rounds (game_id, dealer_id, current_player_id) VALUES (?,?,?)')
-            ->execute([$game['id'],$newDealer, $newFirstBidder]);
+            ->execute([$gameId,$newDealer, $newFirstBidder]);
 
             $newRoundId = (int)$db->lastInsertId();
 
