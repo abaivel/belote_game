@@ -34,7 +34,7 @@ if (count($totalGamesWithEachPlayers) > 0) {
                                             ];
 }
 
-$totalRoundsTakenWithEachTrumpStmt = $db->prepare("SELECT r.trump, 
+$totalRoundsTakenWithEachTrumpStmt = $db->prepare("SELECT r.trump_suit, 
                                                     COUNT(*) AS total_taken, 
                                                     COUNT(CASE p.team 
                                                             WHEN 1 
@@ -55,18 +55,11 @@ $totalRoundsTakenWithEachTrumpStmt = $db->prepare("SELECT r.trump,
                                                     AND r.trump_player_id=p.id 
                                                     GROUP BY r.trump_suit");
 $totalRoundsTakenWithEachTrumpStmt->execute([$userId]);
-$totalRoundsTakenWithEachTrump = $totalRoundsTakenWithEachTrumpStmt->fetch();
+$totalRoundsTakenWithEachTrump = $totalRoundsTakenWithEachTrumpStmt->fetchAll();
 
-/*$totalPlayerCardsWhenTakenStmt = $db->prepare("SELECT r.id, COUNT(c.id) AS nb_cards_trump
-                                                    FROM rounds r, players p, (SELECT * FROM cards WHERE round_id=r.id LIMIT 21) c
-                                                    WHERE r.game_id=p.game_id
-                                                    AND c.round_id = r.id
-                                                    AND p.user_id=? 
-                                                    AND r.trump_player_id=p.id
-                                                    AND c.player_id=p.id
-                                                    AND c.suit=r.trump_suit
-                                                    GROUP BY r.id");*/ //En cours
-
+$totalPlayerCardsWhenTakenStmt = $db->prepare("SELECT AVG(nb_cards_trump) FROM (SELECT r.id, COUNT(c.id) AS nb_cards_trump FROM rounds r JOIN players p ON p.game_id = r.game_id JOIN ( SELECT id, player_id, suit, round_id, ROW_NUMBER() OVER (PARTITION BY round_id ORDER BY id) AS rn FROM cards ) c ON c.player_id = p.id AND c.suit = r.trump_suit AND c.round_id = r.id WHERE p.user_id = ? AND r.trump_player_id = p.id AND c.rn <= 21 GROUP BY r.id) AS t;");
+$totalPlayerCardsWhenTakenStmt->execute([$userId]);
+$totalPlayerCardsWhenTaken = $totalPlayerCardsWhenTakenStmt->fetchColumn();
 
 
 success(['stats' => [
@@ -77,5 +70,6 @@ success(['stats' => [
     "total_rounds_taken_won"=> $totalRoundsTakenWon["total_rounds_taken_won"],
     "best_and_worst_players"=>$playersWithHighestAndLowestVictory,
     'total_belote_re'=> $totalRoundsPlayed['nb_belote'],
-    'total_with_each_trump'=> $trumpPlayersWithEachTrump,
+    'total_with_each_trump'=> $totalRoundsTakenWithEachTrump,
+    'avg_nb_trump_cards_when_taken'=>$totalPlayerCardsWhenTaken,
 ]]);
