@@ -5,8 +5,7 @@
 import { useState, useEffect } from 'react';
 import { api } from '../utils/api.js';
 import { useAuth } from '../utils/auth.jsx';
-import { ProfilePerso } from '../components/ProfilePerso.jsx';
-import { ProfileStats } from '../components/ProfileStats.jsx';
+import { ProfilePublic } from '../components/ProfilePublic.jsx';
 import { DialogWindow } from '../components/DialogWindow.jsx';
 import '../styles/LobbyPage.css';
 
@@ -21,7 +20,6 @@ export function LobbyPage({ onJoinGame }) {
   const [loading, setLoading] = useState(false);
   //const [tab, setTab]     = useState('join'); // 'join' | 'list'
   const [isProfileOpen, setIsProfileOpen] = useState(false)
-  const [isProfileStatsOpen, setIsProfileStatsOpen] = useState(false)
 
   useEffect(() => {
     loadGames();
@@ -36,8 +34,6 @@ export function LobbyPage({ onJoinGame }) {
         logout();
       }
       setGames(data.games);
-      console.log(data.games[0].players_ids.split(","));
-      console.log(data.games[0].players_ids.split(",").includes(user.id.toString()));
     } catch (error) {
       console.error(error)
     }
@@ -72,13 +68,7 @@ export function LobbyPage({ onJoinGame }) {
     <>
       {isProfileOpen && (
         <DialogWindow setOpen={setIsProfileOpen}>
-          <ProfilePerso setOpen={setIsProfileOpen} setNewPseudo={(p)=>user.pseudo = p } />
-        </DialogWindow>
-      )}
-
-      {isProfileStatsOpen && (
-        <DialogWindow setOpen={setIsProfileStatsOpen}>
-          <ProfileStats />
+          <ProfilePublic setNewPseudo={(p)=>user.pseudo = p } userId={null} />
         </DialogWindow>
       )}
     <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '40px 20px' }}>
@@ -93,9 +83,6 @@ export function LobbyPage({ onJoinGame }) {
           </span>
           <span className="material-symbols-outlined" style={{color:"#e2c367",cursor: "pointer"}} onClick={()=>setIsProfileOpen(true)}>
             person
-          </span>
-          <span className="material-symbols-outlined" style={{color:"#e2c367",cursor: "pointer"}} onClick={()=>setIsProfileStatsOpen(true)}>
-            leaderboard
           </span>
           <button onClick={logout} style={btnStyle('ghost')}>Déconnexion</button>
         </div>

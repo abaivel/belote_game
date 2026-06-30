@@ -11,7 +11,7 @@ export function DialogWindow({setOpen, children }) {
         borderRadius: 16,
         padding: '20px 28px',
         minWidth: 300,
-        maxWidth: 400,
+        maxWidth: '80%',
         textAlign: 'center',
         boxShadow: '0 20px 60px rgba(0,0,0,0.8)',
         zIndex: 60,

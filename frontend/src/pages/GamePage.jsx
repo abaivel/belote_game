@@ -415,7 +415,7 @@ export function GamePage({ gameId, gameCode, mySeat, onLeave }) {
                   Statistiques
                 </div>
                 <p>Nombre de manches : {game.roundNumber}</p>
-                <table>
+                <table className='table-game-final-stats'>
                   <tr>
                     <td className='td-empty'></td>
                     <th colSpan="2">ÉQUIPE 1</th>

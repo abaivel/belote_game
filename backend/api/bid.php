@@ -194,7 +194,7 @@ if ($action === 'take') {
             $newDealerId   = $bySeat[$newDealerSeat]['id'];
             $newFirstBidder = $bySeat[($newDealerSeat + 1) % 4]['id'];
 
-            //$db->prepare('DELETE FROM cards WHERE game_id=?')->execute([$gameId]);
+            $db->prepare('DELETE FROM cards WHERE round_id=?')->execute([$r["id"]]);
             //$db->prepare('DELETE FROM bids WHERE game_id=?')->execute([$gameId]);
 
             // Réinitialiser l'état de la partie AVANT de redistribuer
