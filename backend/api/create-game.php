@@ -17,9 +17,12 @@ $db   = getDB();
 $code = generateGameCode();
 
 // Créer la partie
-$db->prepare('INSERT INTO games (code, status, dealer_id) VALUES (?,\'waiting\',?)')
-   ->execute([$code, $user['id']]);
+$db->prepare('INSERT INTO games (code, status) VALUES (?,\'waiting\')')
+   ->execute([$code]);
 $gameId = (int)$db->lastInsertId();
+
+$db->prepare('INSERT INTO rounds (game_id) VALUES (?)')
+   ->execute([$gameId]);
 
 // Ajouter le créateur comme premier joueur (siège 0 = Nord, équipe 1)
 $db->prepare('INSERT INTO players (game_id, user_id, seat, team, last_ping) VALUES (?,?,0,1,NOW())')

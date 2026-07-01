@@ -41,6 +41,9 @@ export const api = {
       body: JSON.stringify({ pseudo, password, action }),
     }),
 
+  changePseudo: (pseudo) => 
+    apiFetch('change-pseudo.php', {method: 'PUT', body: JSON.stringify({pseudo})}),
+
   createGame: () =>
     apiFetch('create-game.php', { method: 'POST' }),
 
@@ -76,4 +79,10 @@ export const api = {
       method: 'POST',
       body: JSON.stringify({ gameId }),
     }),
+
+  getStats: (userId) =>
+    apiFetch(`get-stats.php?userId=${userId}`),
+
+  getInfosUser: (userId, gameId) =>
+    apiFetch(`get-user-info.php?userId=${userId}&gameId=${gameId}`),
 };

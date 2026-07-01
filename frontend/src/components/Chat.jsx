@@ -28,7 +28,9 @@ export function Chat({ gameId, messages, pseudo }) {
     if (!content) return;
     setText('');
     try { await api.sendMessage(gameId, content); }
-    catch {}
+    catch (error) {
+      console.error(error)
+    }
   };
 
   return (
