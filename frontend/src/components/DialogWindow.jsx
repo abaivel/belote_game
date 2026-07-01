@@ -12,6 +12,8 @@ export function DialogWindow({setOpen, children }) {
         padding: '20px 28px',
         minWidth: 300,
         maxWidth: '80%',
+        maxHeight: '80vh',
+        overflowY: 'scroll',
         textAlign: 'center',
         boxShadow: '0 20px 60px rgba(0,0,0,0.8)',
         zIndex: 60,

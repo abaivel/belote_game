@@ -6,7 +6,16 @@
     color:rgba(5,18,10,0.97);
 }
 
+.sous-div-stat{
+    padding: 20px;
+    border-radius: 15px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, .3);
+    background-color: #2d6a4f;
+    color:rgba(5,18,10,0.97);
+    color:white;
+}
+
 .div-single-stat{
     text-align: center;
-    width: 150px;
+    width:100%;
 }

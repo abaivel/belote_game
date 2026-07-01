@@ -148,7 +148,14 @@ $totalRoundsTakenWithEachTrumpStmt = $db->prepare("SELECT r.trump_suit,
                                                     AND r.trump_player_id=p.id 
                                                     GROUP BY r.trump_suit");
 $totalRoundsTakenWithEachTrumpStmt->execute([$userId]);
-$totalRoundsTakenWithEachTrump = $totalRoundsTakenWithEachTrumpStmt->fetchAll();
+$totalRoundsTakenWithEachTrump = $totalRoundsTakenWithEachTrumpStmt->fetchAll(PDO::FETCH_UNIQUE);
+
+foreach (['hearts', 'diamonds', 'clubs', 'spades'] as $suit) {
+    $totalRoundsTakenWithEachTrump[$suit] ??= [
+        'total_taken' => 0,
+        'nb_victory' => 0,
+    ];
+}
 
 $avgPlayerNbCardsWhenTakenStmt = $db->prepare("SELECT AVG(nb_cards_trump) 
                                                 FROM (SELECT r.id, COUNT(c.id) AS nb_cards_trump 
@@ -204,10 +211,10 @@ $groupingScoresUser= $groupingScoresUserStmt->fetchAll();
 // calcul du profil de personnalité
 $user_profil="";
 
-if ($totalRoundsPlayed["total_rounds"]>0){
+if ($totalRoundsPlayed["total_rounds"]>5){
     $proportionRoundsTaken = $totalRoundsPlayed["total_rounds_taken"]/$totalRoundsPlayed["total_rounds"];
-    $proportionRoundsTakenWon = $totalRoundsPlayed["total_rounds_taken_won"]/$totalRoundsPlayed["total_rounds_taken"];
-    $proportionRoundsNotTakenWon = $totalRoundsPlayed["total_rounds_taken_by_other_team_won"]/$totalRoundsPlayed["total_rounds_taken_by_other_team"];
+    $proportionRoundsTakenWon = $totalRoundsPlayed["total_rounds_taken"]==0 ? 0 : $totalRoundsPlayed["total_rounds_taken_won"]/$totalRoundsPlayed["total_rounds_taken"];
+    $proportionRoundsNotTakenWon = $totalRoundsPlayed["total_rounds_taken_by_other_team"]==0 ? 0 : $totalRoundsPlayed["total_rounds_taken_by_other_team_won"]/$totalRoundsPlayed["total_rounds_taken_by_other_team"];
 
     $nbRoundsWonWithLessThan90Points = 0;
     $nbRoundsWonWithMoreThan140Points = 0;
@@ -219,8 +226,8 @@ if ($totalRoundsPlayed["total_rounds"]>0){
             break;
         }
     }
-    $proportionRoundsWonWithLessThan90Points = $nbRoundsWonWithLessThan90Points/$totalRoundsPlayed["total_rounds_taken_won"];
-    $proportionRoundsWonWithMoreThan140Points = $nbRoundsWonWithMoreThan140Points/$totalRoundsPlayed["total_rounds_taken_won"];
+    $proportionRoundsWonWithLessThan90Points = $totalRoundsPlayed["total_rounds_taken_won"]==0 ? 0 : $nbRoundsWonWithLessThan90Points/$totalRoundsPlayed["total_rounds_taken_won"];
+    $proportionRoundsWonWithMoreThan140Points = $totalRoundsPlayed["total_rounds_taken_won"]==0 ? 0 : $nbRoundsWonWithMoreThan140Points/$totalRoundsPlayed["total_rounds_taken_won"];
 
     $seuils = [
         'Stratège' => [0.1, 0.9],
