@@ -19,3 +19,28 @@
     text-align: center;
     width:100%;
 }
+
+.grid-stats-atouts{
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    grid-template-rows: repeat(2, 1fr);
+}
+
+.grid-stats-atouts-numbers{
+    grid-area: 1 / 1 / 3 / 2;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+}
+
+@media (max-width: 530px){
+    .grid-stats-atouts{
+        display: flex;
+        flex-direction: column;
+    }
+
+    .grid-stats-atouts-numbers{
+        height: 300px;
+    }
+}

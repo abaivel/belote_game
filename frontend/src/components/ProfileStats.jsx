@@ -12,11 +12,10 @@ export function ProfileStats({stats, setOtherUserId}) {
 
   return (
     <>
-      <div style={{display: "flex", gap:20, justifyContent:'space-between'}}>
+      <div style={{display: "flex", gap:20, justifyContent:'space-between', flexWrap:'wrap'}}>
         <StatDisplay value={stats.total_games} label="Nombre de parties jouées"/>
         <StatDisplay value={stats.total_games_won} label="Nombre de parties gagnées"/>
         <StatDisplay value={stats.total_games==0 ? "-" : (stats.total_games_won/stats.total_games)*100 + "%"} label="Pourcentage de victoire"/>
-        
       </div>
       <br></br>
       <div className='div-stat'>
@@ -47,8 +46,8 @@ export function ProfileStats({stats, setOtherUserId}) {
       <div className='div-stat'>
         <h3 style={{textAlign:"left", fontSize:20}}>Atouts</h3>
         <br></br>
-        <div style={{display:"grid", gridTemplateColumns: "repeat(3, 1fr)", gridGap:20, gridTemplateRows: "repeat(2, 1fr)"}}>
-          <div className='sous-div-stat' style={{gridColumn: '1/2', gridRow: '1/3', display: "flex", flexDirection:"column", justifyContent: "space-around"}}>
+        <div className='grid-stats-atouts'>
+          <div className='sous-div-stat grid-stats-atouts-numbers'>
             <div style={{display:"flex", flexDirection:'column', justifyContent:'space-around'}}>
               <p>Nombre moyen de cartes d'atout lors de la prise</p>
               <p style={{fontSize:30}}>{stats.total_rounds==0 ? "-" : Math.round(stats.avg_nb_trump_cards_when_taken*10)/10}</p>
