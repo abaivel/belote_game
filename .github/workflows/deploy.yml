@@ -21,6 +21,7 @@ jobs:
       - name: 
         run: |
           sed -i 's|/favicon.png|/belote/favicon.png|g' index.html
+          sed -i 's|href="/manifest.json"|href="/belote/manifest.json"|g' index.html
         working-directory: frontend
 
       - name: 
