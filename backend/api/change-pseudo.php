@@ -1,6 +1,6 @@
 <?php
 // ============================================================
-// api/login.php — Authentification (register + login)
+// api/change-pseudo.php — Modifier le pseudo
 // ============================================================
 
 require_once __DIR__ . '/../lib/db.php';

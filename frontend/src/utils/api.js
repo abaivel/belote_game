@@ -85,4 +85,16 @@ export const api = {
 
   getInfosUser: (userId, gameId) =>
     apiFetch(`get-user-info.php?userId=${userId}&gameId=${gameId}`),
+
+  saveTeams: (players) =>
+    apiFetch('save-teams.php', {
+      method: "PUT",
+      body: JSON.stringify(players)
+    }),
+
+  startGame: (gameId) =>
+    apiFetch('start-game.php', {
+      method: 'PUT',
+      body: JSON.stringify({gameId})
+    }),
 };

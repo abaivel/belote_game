@@ -12,7 +12,7 @@ export function ProfileStats({stats, setOtherUserId}) {
 
   return (
     <>
-      <div style={{display: "flex", gap:20, justifyContent:'space-between', flexWrap:'wrap'}}>
+      <div className='div-stats-line' style={{display: "flex", gap:20, justifyContent:'space-between'}}>
         <StatDisplay value={stats.total_games} label="Nombre de parties jouées"/>
         <StatDisplay value={stats.total_games_won} label="Nombre de parties gagnées"/>
         <StatDisplay value={stats.total_games==0 ? "-" : (stats.total_games_won/stats.total_games)*100 + "%"} label="Pourcentage de victoire"/>

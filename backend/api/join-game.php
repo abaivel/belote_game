@@ -93,7 +93,7 @@ for ($s = 0; $s <= 3; $s++) {
 $db->prepare('INSERT INTO players (game_id, user_id, seat, team, last_ping) VALUES (?,?,?,?,NOW())')
    ->execute([$game['id'], $user['id'], $seat, $team]);
 
-$newCount = count($takenSeats) + 1;
+/*$newCount = count($takenSeats) + 1;
 
 // Si 4 joueurs présents → démarrer la partie
 if ($newCount === 4) {
@@ -129,6 +129,6 @@ if ($newCount === 4) {
        ->execute([$game['id']]);
 
     dealCards($firstRoundId, $orderedIds);
-}
+}*/
 
 success(['gameId' => $game['id'], 'code' => $code, 'seat' => $seat, 'team' => $team]);
