@@ -11,6 +11,7 @@ import { Chat } from '../components/Chat.jsx';
 import '../styles/GamePage.css';
 import { DialogWindow } from '../components/DialogWindow.jsx';
 import { ProfilePublic } from '../components/ProfilePublic.jsx';
+import { PlayersTeamDragAndDrop } from '../components/PlayersTeamDragAndDrop.jsx';
 
 const SUIT_SYMBOLS = { hearts: '♥', diamonds: '♦', clubs: '♣', spades: '♠' };
 const SUIT_COLORS  = { hearts: '#c0392b', diamonds: '#c0392b', clubs: '#f5ead5', spades: '#f5ead5' };
@@ -29,7 +30,7 @@ const TEAM_COLORS = {
   2: { bg: 'rgba(46,213,115,0.12)', border: 'rgba(46,213,115,0.4)', text: '#2ed573', label: 'Éq.2' },
 };
 
-export function GamePage({ gameId, gameCode, mySeat, onLeave }) {
+export function GamePage({ gameId, gameCode, mySeat, onLeave, onReload }) {
   const { user } = useAuth();
   const [state, setState]        = useState(null);
   const [bidLoading, setBidLoad] = useState(false);
@@ -52,6 +53,7 @@ export function GamePage({ gameId, gameCode, mySeat, onLeave }) {
         onLeave();
       }
       setState(data);
+      onReload(data.game.id, data.game.code, data.myPlayer.seat, data.myPlayer.team)
       const trick = data.round.currentTrick;
       if (prevTrick.current !== -1 && prevTrick.current !== trick) {
         setShowLT(true);
@@ -100,6 +102,14 @@ export function GamePage({ gameId, gameCode, mySeat, onLeave }) {
       showNotif(e.message, true);
     }
   };
+
+  const handleStartGame = async () => {
+    try{
+      await api.startGame(gameId)
+    }catch (error){
+      console.log(error)
+    }
+  }
 
   const showNotif = (msg, isError = false) => {
     setNotif({ msg, isError });
@@ -338,8 +348,7 @@ export function GamePage({ gameId, gameCode, mySeat, onLeave }) {
           {/* ---- EN ATTENTE ---- */}
           {isWaiting && (
             <div style={{
-              position: 'fixed', top: '50%', left: '50%', transform: 'translate(-50%,-50%)',
-              textAlign: 'center', zIndex: 50,
+              position: 'fixed', inset:0, margin:"auto", textAlign: "center", zIndex:50, width: "fit-content", height:"fit-content"
             }}>
               <div style={{ fontFamily: "'Cinzel', serif", fontSize: 20, color: '#c9a84c', marginBottom: 10 }}>
                 En attente des joueurs
@@ -357,16 +366,24 @@ export function GamePage({ gameId, gameCode, mySeat, onLeave }) {
                   {gameCode}
                 </span>
               </div>
-              <div style={{ display: 'flex', gap: 8, justifyContent: 'center', flexWrap: 'wrap' }}>
-                {players.map(p => (
-                  <span key={p.id} style={{
-                    padding: '4px 12px', borderRadius: 20, fontSize: 12,
-                    background: TEAM_COLORS[p.team]?.bg,
-                    border: `1px solid ${TEAM_COLORS[p.team]?.border}`,
-                    color: TEAM_COLORS[p.team]?.text,
-                  }}>{p.pseudo} ({TEAM_COLORS[p.team]?.label})</span>
-                ))}
-              </div>
+              
+              <PlayersTeamDragAndDrop players={players} myUserId={user.id} onReload={onReload}/>
+              {players.length==4 && 
+                <button onClick={handleStartGame} style={{border: '1px solid rgba(201, 168, 76, 0.3)',
+                                                          borderRadius: 8,
+                                                          cursor: 'pointer',
+                                                          fontFamily: 'Cinzel, serif',
+                                                          letterSpacing: '0.1em',
+                                                          transition: '0.2s',
+                                                          whiteSpace: 'nowrap',
+                                                          padding: '6px 14px',
+                                                          fontSize: 11,
+                                                          background: 'rgba(201, 168, 76, 0.15)',
+                                                          color: 'rgb(201, 168, 76)',
+                                                          marginTop:10}}>
+                  Commencer la partie
+                </button>
+              }
             </div>
           )}
 
