@@ -4,6 +4,15 @@ import { ProfileStats } from './ProfileStats.jsx';
 import { StatDisplay } from './StatDisplay.jsx';
 import { ModifyProfile } from './ModifyProfile.jsx';
 
+const PROFILES_TYPES = {
+  "Stratège" : {description : "Peu de prises, très haut taux de réussite"},
+  "Flambeur" : {description : "Beaucoup de victoires avec des gros scores"},
+  "Défenseur" : {description : "Excellent contre les preneurs"},
+  "Pyromane" : {description : "Prend très souvent"},
+  "Chanceux" : {description : "Gagne souvent avec peu de cartes d'atouts lors de la prise"},
+  "Voleur" : {description : "Gagne souvent avec moins de 10 points de marge"}
+}
+
 export function ProfilePublic({userId, gameId, setNewPseudo}) {
   const [infosUser, setInfoUser] = useState([])
   const [stats, setStats] = useState([])
@@ -108,7 +117,7 @@ export function ProfilePublic({userId, gameId, setNewPseudo}) {
                 }
               </div>
               <div style={{display:"flex", alignItems:"center", gap:10}}>
-                <p style={{fontSize: 20}}>{stats.user_profil}</p>
+                <p style={{fontSize: 20}} title={stats.user_profil && PROFILES_TYPES[stats.user_profil].description}>{stats.user_profil}</p>
               </div>
             </div>
             {gameId &&
