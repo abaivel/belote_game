@@ -7,6 +7,7 @@
 // ============================================================
 
 import { useState } from 'react';
+import { Card } from './Card';
 
 const SUIT_INFO = {
   hearts:   { symbol: '♥', label: 'Cœur',   color: '#e74c3c', card_color: '#e74c3c' },
@@ -16,10 +17,9 @@ const SUIT_INFO = {
 };
 
 const SUITS = ['hearts', 'diamonds', 'clubs', 'spades'];
-const VALUE_DISPLAY = { '7':'7','8':'8','9':'9','10':'10','J':'V','Q':'D','K':'R','A':'A' };
 
 export function BiddingPanel({ state, myPlayer, onBid, loading }) {
-  const { game, round, players, talonCard } = state;
+  const {round, players, talonCard } = state;
   const [selectedSuit, setSelectedSuit] = useState(null);
   const [error, setError]               = useState('');
 
@@ -69,7 +69,7 @@ export function BiddingPanel({ state, myPlayer, onBid, loading }) {
       {/* Carte retournée */}
       {talonCard && (
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 14, marginBottom: 14 }}>
-          <TalonCard suit={talonCard.suit} value={talonCard.value} />
+          <Card suit={talonCard.suit} value={talonCard.value} />
           <div style={{ textAlign: 'left' }}>
             <div style={{ fontSize: 10, color: 'rgba(245,234,213,0.4)', letterSpacing: '0.15em', marginBottom: 4 }}>
               CARTE RETOURNÉE
@@ -143,35 +143,6 @@ export function BiddingPanel({ state, myPlayer, onBid, loading }) {
           </div>
         </>
       )}
-    </div>
-  );
-}
-
-function TalonCard({ suit, value }) {
-  const suitInfo = SUIT_INFO[suit] || { symbol: '?', color: '#fff' };
-  return (
-    <div style={{
-      width: 56, height: 80, borderRadius: 7,
-      background: '#fffdf5',
-      border: '2px solid #c9a84c',
-      boxShadow: '0 4px 16px rgba(0,0,0,0.5), 0 0 10px rgba(201,168,76,0.25)',
-      display: 'flex', flexDirection: 'column',
-      justifyContent: 'space-between', padding: '3px 4px',
-      flexShrink: 0,
-    }}>
-      <div style={{ lineHeight: 1 }}>
-        <div style={{ fontSize: 14, fontWeight: 700, color: suitInfo.card_color, fontFamily:"'Cinzel',serif" }}>
-          {VALUE_DISPLAY[value] || value}
-        </div>
-        <div style={{ fontSize: 12, color: suitInfo.card_color }}>{suitInfo.symbol}</div>
-      </div>
-      <div style={{ textAlign: 'center', fontSize: 20, color: suitInfo.card_color }}>{suitInfo.symbol}</div>
-      <div style={{ transform: 'rotate(180deg)', alignSelf: 'flex-end', lineHeight: 1 }}>
-        <div style={{ fontSize: 14, fontWeight: 700, color: suitInfo.card_color, fontFamily:"'Cinzel',serif" }}>
-          {VALUE_DISPLAY[value] || value}
-        </div>
-        <div style={{ fontSize: 12, color: suitInfo.card_color }}>{suitInfo.symbol}</div>
-      </div>
     </div>
   );
 }

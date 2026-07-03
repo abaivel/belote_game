@@ -3,6 +3,7 @@
 // ============================================================
 
 import { useState } from 'react';
+import { getCard } from '../utils/getCard';
 
 const SUIT_SYMBOLS = {
   hearts:   { symbol: '♥', color: '#c0392b' },
@@ -59,7 +60,7 @@ export function Card({ suit, value, onClick, playable = false, small = false, fa
         transform: `translateY(${lift}px)`,
         transition: 'transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease',
         display: 'flex',
-        flexDirection: 'column',
+        flexDirection: 'row',
         justifyContent: 'space-between',
         padding: '3px 4px',
         flexShrink: 0,
@@ -75,7 +76,7 @@ export function Card({ suit, value, onClick, playable = false, small = false, fa
         <div style={{ fontSize: size.fs - 2, color: suitInfo.color }}>{suitInfo.symbol}</div>
       </div>
 
-      {/* Symbole central */}
+      {/* Symbole central 
       <div style={{
         textAlign: 'center',
         fontSize: size.sym,
@@ -83,7 +84,9 @@ export function Card({ suit, value, onClick, playable = false, small = false, fa
         opacity: 0.85,
       }}>
         {suitInfo.symbol}
-      </div>
+      </div>*/}
+
+      {getCard(suit, value)}
 
       {/* Coin inférieur droit (retourné) */}
       <div style={{ lineHeight: 1, transform: 'rotate(180deg)', alignSelf: 'flex-end' }}>
