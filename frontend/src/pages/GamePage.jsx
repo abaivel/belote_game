@@ -170,13 +170,13 @@ export function GamePage({ gameId, gameCode, mySeat, onLeave, onReload }) {
           flexWrap: 'wrap', gap: 8,
         }}>
           {/* Code */}
-          <div style={{ fontFamily: "'Cinzel', serif" }}>
+          <div className='div-game-header-code' style={{ fontFamily: "'Cinzel', serif" }}>
             <span style={{ color: 'rgba(201,168,76,0.45)', fontSize: 10, letterSpacing: '0.2em' }}>CODE </span>
             <span style={{ color: '#c9a84c', fontSize: 15, letterSpacing: '0.3em' }}>{gameCode}</span>
           </div>
 
           {/* Scores + atout + qui a pris */}
-          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2 }}>
+          <div className='div-game-header-scores' style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2 }}>
             <div style={{ display: 'flex', gap: 20, alignItems: 'center' }}>
               <ScoreDisplay label="Équipe 1" score={game.team1Score} total={game.team1Total} color={TEAM_COLORS[1].text} />
               <span style={{ color: 'rgba(201,168,76,0.3)', fontFamily: "'Cinzel', serif", fontSize: 11 }}>VS</span>
@@ -200,7 +200,7 @@ export function GamePage({ gameId, gameCode, mySeat, onLeave, onReload }) {
           </div>
 
           {/* Manche + quitter */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+          <div className='div-game-header-leave' style={{ display: 'flex', alignItems: 'center', gap: 10, justifyContent: 'flex-end' }}>
             <span style={{ fontSize: 10, color: 'rgba(245,234,213,0.35)', fontFamily: "'Cinzel', serif" }}>
               MANCHE {game.roundNumber}
             </span>

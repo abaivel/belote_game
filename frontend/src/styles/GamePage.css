@@ -33,3 +33,32 @@
 .div-value-suit {
     font-size: 15px;
 }
+
+.div-game-header-code{
+    order: 1;
+}
+
+.div-game-header-scores{
+    order: 2;
+}
+
+.div-game-header-leave{
+    order: 3;
+}
+
+@media (max-width: 470px){
+    .div-game-header-code{
+        order: 1;
+        width: calc(50% - 16px);
+    }
+
+    .div-game-header-scores{
+        order: 3;
+        width: 100%;
+    }
+
+    .div-game-header-leave{
+        order: 2;
+        width: calc(50% - 16px);
+    }
+}

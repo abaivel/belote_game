@@ -70,7 +70,7 @@ export function Card({ suit, value, onClick, playable = false, small = false, fa
       }}
     >
       {/* Coin supérieur gauche */}
-      <div style={{ lineHeight: 1 }}>
+      <div style={{ lineHeight: 1, display:'flex', flexDirection:'column', alignItems:'center' }}>
         <div className='div-value-card' style={{ fontWeight: 700, color: suitInfo.color, fontFamily: "'Cinzel', serif" }}>
           {display}
         </div>
@@ -90,7 +90,7 @@ export function Card({ suit, value, onClick, playable = false, small = false, fa
       {getCard(suit, value)}
 
       {/* Coin inférieur droit (retourné) */}
-      <div style={{ lineHeight: 1, transform: 'rotate(180deg)', alignSelf: 'flex-end' }}>
+      <div style={{ lineHeight: 1, transform: 'rotate(180deg)', alignSelf: 'flex-end', display:'flex', flexDirection:'column', alignItems:'center' }}>
         <div className='div-value-card' style={{fontWeight: 700, color: suitInfo.color, fontFamily: "'Cinzel', serif" }}>
           {display}
         </div>
