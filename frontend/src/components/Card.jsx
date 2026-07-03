@@ -70,10 +70,10 @@ export function Card({ suit, value, onClick, playable = false, small = false, fa
     >
       {/* Coin supérieur gauche */}
       <div style={{ lineHeight: 1 }}>
-        <div style={{ fontSize: size.fs, fontWeight: 700, color: suitInfo.color, fontFamily: "'Cinzel', serif" }}>
+        <div className='div-value-card' style={{ fontWeight: 700, color: suitInfo.color, fontFamily: "'Cinzel', serif" }}>
           {display}
         </div>
-        <div style={{ fontSize: size.fs - 2, color: suitInfo.color }}>{suitInfo.symbol}</div>
+        <div className='div-value-suit' style={{ color: suitInfo.color }}>{suitInfo.symbol}</div>
       </div>
 
       {/* Symbole central 
@@ -90,10 +90,10 @@ export function Card({ suit, value, onClick, playable = false, small = false, fa
 
       {/* Coin inférieur droit (retourné) */}
       <div style={{ lineHeight: 1, transform: 'rotate(180deg)', alignSelf: 'flex-end' }}>
-        <div style={{ fontSize: size.fs, fontWeight: 700, color: suitInfo.color, fontFamily: "'Cinzel', serif" }}>
+        <div className='div-value-card' style={{fontWeight: 700, color: suitInfo.color, fontFamily: "'Cinzel', serif" }}>
           {display}
         </div>
-        <div style={{ fontSize: size.fs - 2, color: suitInfo.color }}>{suitInfo.symbol}</div>
+        <div className='div-value-suit' style={{ color: suitInfo.color }}>{suitInfo.symbol}</div>
       </div>
 
       {/* Indicateur jouable */}

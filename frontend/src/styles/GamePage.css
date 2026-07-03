@@ -21,8 +21,22 @@
     font-size: 20px;
 }
 
+.div-value-card {
+    font-size: 17px;
+}
+
+.div-value-suit {
+    font-size: 15px;
+}
+
 @media (max-width: 530px){
     .div-content-card {
         font-size: 16px;
     }
+    .div-value-card {
+        font-size: 13px;
+    }
+    .div-value-suit {
+    font-size: 11px;
+}
 }
