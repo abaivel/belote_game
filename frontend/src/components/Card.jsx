@@ -66,6 +66,7 @@ export function Card({ suit, value, onClick, playable = false, small = false, fa
         flexShrink: 0,
         position: 'relative',
         userSelect: 'none',
+        fontFamily:'Liberation Serif'
       }}
     >
       {/* Coin supérieur gauche */}

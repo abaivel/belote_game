@@ -1,3 +1,8 @@
+@font-face {
+  font-family: 'Liberation Serif';
+  src: url("LiberationSerif-Regular.ttf");
+}
+
 .table-game-final-stats {
     border-collapse: collapse;
     margin: 20px;
