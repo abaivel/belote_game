@@ -231,7 +231,7 @@ if ($totalRoundsPlayed["total_rounds"]>5){
 
     $seuils = [
         'Stratège' => [0.1, 0.9],
-        'Flambeur' => 0.6,
+        'Impitoyable' => 0.6,
         'Défenseur' => 0.4,
         'Pyromane' => 0.5,
         'Chanceux' => [3, 0.75],
@@ -240,7 +240,7 @@ if ($totalRoundsPlayed["total_rounds"]>5){
 
     $profils = [
         'Stratège'=>$seuils['Stratège'][0]-$proportionRoundsTaken+$proportionRoundsTakenWon-$seuils['Stratège'][1],
-        'Flambeur'=>$proportionRoundsWonWithMoreThan140Points-$seuils['Flambeur'],
+        'Impitoyable'=>$proportionRoundsWonWithMoreThan140Points-$seuils['Impitoyable'],
         'Défenseur'=>$proportionRoundsNotTakenWon-$seuils['Défenseur'],
         'Pyromane' =>$proportionRoundsTaken-$seuils['Pyromane'],
         'Chanceux'=>$seuils['Chanceux'][0]-$avgPlayerNbCardsWhenTaken + $proportionRoundsTakenWon-$seuils['Chanceux'][1],

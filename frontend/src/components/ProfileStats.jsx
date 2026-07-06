@@ -68,7 +68,7 @@ export function ProfileStats({stats, setOtherUserId}) {
         </div>
       </div>
       <br></br>
-      {stats.best_and_worst_players.length > 0 &&
+      {stats.best_and_worst_players.best &&
         <div className='div-stat'>
           <h3 style={{textAlign:"left", fontSize:20}}>Partenaires</h3>
           <br></br>
