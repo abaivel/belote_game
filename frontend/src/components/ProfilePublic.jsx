@@ -6,7 +6,7 @@ import { ModifyProfile } from './ModifyProfile.jsx';
 
 const PROFILES_TYPES = {
   "Stratège" : {description : "Peu de prises, très haut taux de réussite"},
-  "Flambeur" : {description : "Beaucoup de victoires avec des gros scores"},
+  "Impitoyable" : {description : "Beaucoup de victoires avec des gros scores"},
   "Défenseur" : {description : "Excellent contre les preneurs"},
   "Pyromane" : {description : "Prend très souvent"},
   "Chanceux" : {description : "Gagne souvent avec peu de cartes d'atouts lors de la prise"},
@@ -117,7 +117,12 @@ export function ProfilePublic({userId, gameId, setNewPseudo}) {
                 }
               </div>
               <div style={{display:"flex", alignItems:"center", gap:10}}>
-                <p style={{fontSize: 20}} title={stats.user_profil && PROFILES_TYPES[stats.user_profil].description}>{stats.user_profil}</p>
+                {stats.user_profil &&
+                  <>
+                    <img src={"personality_profiles/"+stats.user_profil+".svg"} style={{width: 30}}/>
+                    <p style={{fontSize: 20}} title={stats.user_profil && PROFILES_TYPES[stats.user_profil].description}>{stats.user_profil}</p>
+                  </>
+                }
               </div>
             </div>
             {gameId &&
