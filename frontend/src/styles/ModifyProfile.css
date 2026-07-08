@@ -1,0 +1,41 @@
+.div-input-change-pseudo{
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.div-error-change-pseudo{
+    background: rgba(192,57,43,0.2);
+    border: 1px solid rgba(192,57,43,0.4);
+    color: #e74c3c;
+}
+
+.button-change-pseudo{
+    width: 100%;
+    margin-top: 24px;
+    padding: 14px 0px;
+    background: linear-gradient(135deg, rgb(201, 168, 76), rgb(232, 201, 109));
+    border: none;
+    border-radius: 8px;
+    color: rgb(26, 10, 0);
+    font-family: Cinzel, serif;
+    font-size: 14px;
+    letter-spacing: 0.15em;
+    font-weight: 700;
+    cursor: pointer;
+    transition: 0.2s;
+    box-shadow: rgba(201, 168, 76, 0.3) 0px 4px 16px;
+}
+
+.div-success-change-pseudo{
+    background: rgba(43, 192, 50, 0.2);
+    border: 1px solid rgba(43, 192, 80, 0.4);
+    color: #3ce745;
+}
+
+.div-return-message-change-pseudo{
+    margin-top: 16px; 
+    padding: 10px 14px;
+    font-size: 13px;
+    border-radius: 8px;
+}

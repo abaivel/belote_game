@@ -19,12 +19,14 @@ function AppRouter() {
   });
 
   const reloadGame = (gameId, code, seat, team) => {
-    try {
-      const gameData = { gameId, gameCode: code, mySeat: seat, myTeam: team };
-      localStorage.setItem('belote_game', JSON.stringify(gameData));
-      setGame(gameData);
-    } catch {
-      setGame(null);
+    if (localStorage.getItem('belote_game')!=null){
+      try {
+        const gameData = { gameId, gameCode: code, mySeat: seat, myTeam: team };
+        localStorage.setItem('belote_game', JSON.stringify(gameData));
+        setGame(gameData);
+      } catch {
+        setGame(null);
+      }
     }
   };
 

@@ -8,6 +8,7 @@
 
 import { useState } from 'react';
 import { Card } from './Card';
+import "../styles/BiddingPanel.css"
 
 const SUIT_INFO = {
   hearts:   { symbol: '♥', label: 'Cœur',   color: '#e74c3c', card_color: '#e74c3c' },
@@ -44,40 +45,24 @@ export function BiddingPanel({ state, myPlayer, onBid, loading }) {
 
   return (
     // Positionné en haut de la table, pas en plein milieu, pour laisser les cartes visibles
-    <div style={{
-      position: 'absolute',
-      left: '50%',
-      transform: 'translateX(-50%)',
-      background: 'rgba(5,18,10,0.97)',
-      border: '1px solid rgba(201,168,76,0.5)',
-      borderRadius: 16,
-      padding: '20px 28px',
-      minWidth: 300,
-      maxWidth: 400,
-      textAlign: 'center',
-      boxShadow: '0 20px 60px rgba(0,0,0,0.8)',
-      zIndex: 40, // inférieur aux cartes (zIndex 30 pour la main) — NON, on doit être au dessus des cartes adverses mais pas gêner les nôtres
-    }}>
+    <div className='bidding-panel-window'>
       {/* Titre */}
-      <h3 style={{
-        fontFamily: "'Cinzel', serif", color: '#c9a84c',
-        fontSize: 15, letterSpacing: '0.1em', marginBottom: 10,
-      }}>
+      <h3>
         {bidTurn === 1 ? 'PRENDRE À LA COULEUR ?' : 'TOUR 2 — CHOISIR UNE COULEUR'}
       </h3>
 
       {/* Carte retournée */}
       {talonCard && (
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 14, marginBottom: 14 }}>
+        <div className='div-card-turned-over'>
           <Card suit={talonCard.suit} value={talonCard.value} />
-          <div style={{ textAlign: 'left' }}>
-            <div style={{ fontSize: 10, color: 'rgba(245,234,213,0.4)', letterSpacing: '0.15em', marginBottom: 4 }}>
+          <div className='div-card-turned-over-infos'>
+            <div className='div-card-turned-over-infos-title'>
               CARTE RETOURNÉE
             </div>
-            <div style={{ fontSize: 28, color: SUIT_INFO[talonCard.suit]?.color }}>
+            <div className='div-card-turned-over-infos-symbol' style={{ color: SUIT_INFO[talonCard.suit]?.color }}>
               {SUIT_INFO[talonCard.suit]?.symbol}
             </div>
-            <div style={{ fontSize: 13, color: SUIT_INFO[talonCard.suit]?.color }}>
+            <div className='div-card-turned-over-infos-label' style={{ color: SUIT_INFO[talonCard.suit]?.color }}>
               {SUIT_INFO[talonCard.suit]?.label}
             </div>
           </div>
@@ -85,10 +70,10 @@ export function BiddingPanel({ state, myPlayer, onBid, loading }) {
       )}
 
       {/* Qui doit parler */}
-      <p style={{ fontSize: 13, color: 'rgba(245,234,213,0.6)', marginBottom: 12 }}>
+      <p className='p-who-speaks'>
         {isMyTurn
-          ? <span style={{ color: '#e8c96d', fontWeight: 'bold' }}>C'est votre tour</span>
-          : <>Tour de <strong style={{ color: '#e8c96d' }}>{currentPlayerName}</strong></>
+          ? <span>C'est votre tour</span>
+          : <>Tour de<span>{currentPlayerName}</span></>
         }
       </p>
 
@@ -96,19 +81,17 @@ export function BiddingPanel({ state, myPlayer, onBid, loading }) {
         <>
           {/* Tour 2 : sélecteur de couleur ≠ proposée */}
           {bidTurn === 2 && (
-            <div style={{ marginBottom: 12 }}>
-              <p style={{ fontSize: 11, color: 'rgba(245,234,213,0.4)', letterSpacing: '0.1em', marginBottom: 8 }}>
+            <div className='div-choice-trump'>
+              <p>
                 CHOISISSEZ L'ATOUT (sauf {SUIT_INFO[proposed]?.symbol})
               </p>
-              <div style={{ display: 'flex', gap: 8, justifyContent: 'center' }}>
+              <div>
                 {SUITS.filter(s => s !== proposed).map(s => (
                   <button key={s} onClick={() => setSelectedSuit(s)}
                     style={{
-                      width: 54, height: 54, borderRadius: 10, cursor: 'pointer',
                       border: `2px solid ${selectedSuit === s ? '#c9a84c' : 'rgba(201,168,76,0.2)'}`,
                       background: selectedSuit === s ? 'rgba(201,168,76,0.2)' : 'rgba(255,255,255,0.04)',
-                      color: SUIT_INFO[s].color, fontSize: 26,
-                      transition: 'all 0.15s',
+                      color: SUIT_INFO[s].color
                     }}>
                     {SUIT_INFO[s].symbol}
                   </button>
@@ -117,24 +100,11 @@ export function BiddingPanel({ state, myPlayer, onBid, loading }) {
             </div>
           )}
 
-          {error && <p style={{ color: '#e74c3c', fontSize: 12, marginBottom: 8 }}>{error}</p>}
+          {error && <p className='p-error-bidding'>{error}</p>}
 
-          <div style={{ display: 'flex', gap: 10, justifyContent: 'center' }}>
-            <button onClick={handlePass} disabled={loading} style={{
-              padding: '9px 20px', borderRadius: 8, cursor: 'pointer',
-              border: '1px solid rgba(245,234,213,0.25)',
-              background: 'transparent', color: 'rgba(245,234,213,0.7)',
-              fontFamily: "'Cinzel', serif", fontSize: 12, letterSpacing: '0.1em',
-            }}>PASSER</button>
-            <button onClick={handleTake} disabled={loading || (bidTurn === 2 && !selectedSuit)}
-              style={{
-                padding: '9px 20px', borderRadius: 8, border: 'none', cursor: 'pointer',
-                background: (bidTurn === 2 && !selectedSuit)
-                  ? 'rgba(201,168,76,0.15)'
-                  : 'linear-gradient(135deg,#c9a84c,#e8c96d)',
-                color: (bidTurn === 2 && !selectedSuit) ? 'rgba(201,168,76,0.4)' : '#1a0a00',
-                fontFamily: "'Cinzel', serif", fontSize: 12, fontWeight: 700, letterSpacing: '0.1em',
-              }}>
+          <div className='div-choice-buttons'>
+            <button className='div-choice-button-pass' onClick={handlePass} disabled={loading}>PASSER</button>
+            <button className='div-choice-button-take' onClick={handleTake} disabled={loading || (bidTurn === 2 && !selectedSuit)}>
               {bidTurn === 1
                 ? `PRENDRE ${SUIT_INFO[proposed]?.symbol || ''}`
                 : 'PRENDRE'

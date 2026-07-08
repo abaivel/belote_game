@@ -1,8 +1,457 @@
 @font-face {
-  font-family: 'Liberation Serif';
-  src: url("LiberationSerif-Regular.ttf");
+  font-family: 'Symboles';
+  src: url("symboles.woff");
 }
 
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.55} }
+@keyframes fadeIn { from{opacity:0;transform:translateX(-50%) translateY(-8px)} to{opacity:1;transform:translateX(-50%) translateY(0)} }
+::-webkit-scrollbar{width:4px}
+::-webkit-scrollbar-track{background:rgba(255,255,255,0.03)}
+::-webkit-scrollbar-thumb{background:rgba(201,168,76,0.3);border-radius:2px}
+
+/* loading */
+.div-game-loading{
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.div-game-loading div{
+    font-family: 'Cinzel', serif;
+    color: #c9a84c;
+    letter-spacing: 0.2em;
+}
+
+.div-game-container{
+    min-height: 100vh;
+    position: relative;
+    overflow: hidden;
+}
+
+/*header*/
+
+.div-game-header{
+    position: fixed;
+    top: 0px;
+    left: 0px;
+    right: 0px;
+    z-index: 50;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 16px;
+    background: rgba(0, 0, 0, 0.55);
+    backdrop-filter: blur(4px);
+    border-bottom: 1px solid rgba(201, 168, 76, 0.15);
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.div-game-header-code{
+    order: 1;
+    font-family: Cinzel, serif;
+}
+
+.div-game-header-scores-trump{
+    order: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+}
+
+.div-game-header-leave{
+    order: 3;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    justify-content: flex-end;
+}
+
+.div-game-header-code span:first-child{
+    color: rgba(201, 168, 76, 0.45);
+    font-size: 10px;
+    letter-spacing: 0.2em;
+}
+
+.div-game-header-code span:nth-child(2){
+    color: rgb(201, 168, 76);
+    font-size: 15px;
+    letter-spacing: 0.3em;
+}
+
+.div-game-header-scores{
+    display: flex;
+    gap: 20px;
+    align-items: center;
+}
+
+.div-game-header-scores-vs{
+    color: rgba(201, 168, 76, 0.3);
+    font-family: Cinzel, serif;
+    font-size: 11px;
+}
+
+.div-game-header-trump{
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    font-size: 11;
+}
+
+.div-game-header-trump span:first-child{
+    font-size: 16;
+}
+
+.div-game-header-trump span:nth-child(2){
+    color: rgba(245,234,213,0.5);
+}
+
+.span-header-trump-player-taker{
+    color: #c9a84c;
+}
+
+.span-header-trump-player-taker span{
+    margin-left: 4px;
+}
+
+.div-game-header-score-display{
+    text-align: center;
+}
+
+.div-game-header-score-display div:first-child{
+    font-size: 9px;
+    letter-spacing: 0.12em;
+    font-family: Cinzel, serif;
+    opacity: 0.8;
+}
+.div-game-header-score-display div:last-child{
+    font-family: Cinzel, serif;
+    font-size: 17px;
+}
+
+.div-game-header-score-display div:last-child span{
+    font-size: 10px;
+    opacity: 0.55;
+    margin-left: 3px;
+}
+
+.div-game-header-leave span {
+    font-size: 10px;
+    color: rgba(245, 234, 213, 0.35);
+    font-family: Cinzel, serif;
+}
+
+.div-game-header-leave button{
+    padding: 5px 11px;
+    background: transparent;
+    border: 1px solid rgba(245, 234, 213, 0.2);
+    border-radius: 6px;
+    color: rgba(245, 234, 213, 0.5);
+    font-size: 10px;
+    font-family: Cinzel, serif;
+    cursor: pointer;
+    letter-spacing: 0.1em;
+}
+
+/*game table*/
+.div-game-table{
+    padding-top: 70px;
+    padding-bottom: 130px;
+    min-height: 100vh;
+    position: relative;
+}
+
+.div-game-table-seat-container{
+    position: fixed;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    z-index: 10;
+}
+
+.div-game-table-seat-player-name-team{
+    font-family: Cinzel, serif;
+    font-size: 11px;
+    padding: 4px 10px;
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: 0.3s;
+    white-space: nowrap;
+}
+
+.div-game-table-seat-player-name-team .span-point{
+    font-size: 8px;
+}
+
+.div-game-table-seat-player-name-team .span-is-me{
+    font-size: 9px;
+    opacity: 0.7;
+}
+
+.div-game-table-seat-player-name-team .span-label-team{
+    font-size: 9px;
+    padding: 1px 5px;
+    border-radius: 8px;
+}
+
+.div-game-table-seat-other-cards{
+    display: flex;
+}
+
+.div-game-table-playing-cards{
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 240px;
+    height: 240px;
+    z-index: 20;
+    pointer-events: none;
+}
+
+.div-game-table-playing-cards-central-circle{
+    position: absolute;
+    inset: 0px;
+    border-radius: 50%;
+    background: rgba(0, 0, 0, 0.18);
+    border: 1px solid rgba(201, 168, 76, 0.12);
+}
+
+.div-game-table-playing-cards-last-trick{
+    position: absolute;
+    top: -22px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-family: 'Cinzel', serif;
+    font-size: 9px;
+    color: rgba(201,168,76,0.6);
+    letter-spacing: 0.15em;
+    white-space: nowrap;
+}
+
+.div-game-table-playing-cards-north{
+    position: absolute;
+    top: 8px;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.div-game-table-playing-cards-east{
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.div-game-table-playing-cards-south{
+    position: absolute;
+    bottom: 8px;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.div-game-table-playing-cards-west{
+    position: absolute;
+    left: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.div-game-table-waiting-container{
+    position: fixed;
+    inset: 0px;
+    margin: auto;
+    text-align: center;
+    z-index: 50;
+    width: fit-content;
+    height: fit-content;
+}
+
+.div-game-table-waiting-title{
+    font-family: Cinzel, serif;
+    font-size: 20px;
+    color: rgb(201, 168, 76);
+    margin-bottom: 10px;
+}
+
+.div-game-table-waiting-nb-players{
+    color: rgba(245, 234, 213, 0.55);
+    font-size: 14px;
+    margin-bottom: 20px;
+}
+
+.div-game-table-waiting-code{
+    padding: 12px 28px;
+    border-radius: 10px;
+    background: rgba(201, 168, 76, 0.1);
+    border: 1px solid rgba(201, 168, 76, 0.3);
+    margin-bottom: 16px;
+}
+
+.div-game-table-waiting-code span:first-child{
+    color: rgba(245, 234, 213, 0.5);
+    font-size: 12px;
+}
+
+.div-game-table-waiting-code span:last-child{
+    font-family: Cinzel, serif;
+    color: rgb(201, 168, 76);
+    font-size: 22px;
+    letter-spacing: 0.3em;
+}
+
+.button-game-table-start-game{
+    border: 1px solid rgba(201, 168, 76, 0.3);
+    border-radius: 8px;
+    cursor: pointer;
+    font-family: Cinzel, serif;
+    letter-spacing: 0.1em;
+    transition: 0.2s;
+    white-space: nowrap;
+    padding: 6px 14px;
+    font-size: 11px;
+    background: rgba(201, 168, 76, 0.15);
+    color: rgb(201, 168, 76);
+    margin-top: 10px;
+}
+
+.div-game-table-bidding-panel{
+    position: relative;
+    width: 100%;
+    height: calc(-200px + 100vh);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.div-game-table-game-over-container{
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(5, 20, 10, 0.97);
+    border: 1px solid rgba(201, 168, 76, 0.5);
+    border-radius: 16px;
+    padding: 40px 50px;
+    text-align: center;
+    z-index: 200;
+}
+
+.div-game-table-game-over-title{
+    font-family: Cinzel, serif;
+    font-size: 26px;
+    color: rgb(201, 168, 76);
+    margin-bottom: 24px;
+}
+
+.div-game-table-game-over-scores-container{
+    display: flex;
+    gap: 40px;
+    justify-content: center;
+    margin-bottom: 32px;
+}
+
+.div-game-table-game-over-score-name-team{
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    margin-bottom: 4px;
+    font-family: Cinzel, serif;
+}
+
+.div-game-table-game-over-score-team-players{
+    font-size: 11px;
+    color: rgba(245, 234, 213, 0.5);
+    margin-bottom: 8px;
+}
+
+.div-game-table-game-over-score{
+    font-size: 44px;
+    font-family: Cinzel, serif;
+}
+
+.div-game-table-game-over-stats-title{
+    font-family: Cinzel, serif;
+    font-size: 18px;
+    color: rgb(201, 168, 76);
+    margin-bottom: 24px;
+}
+
+.div-game-table-game-over-container button{
+    padding: 12px 28px;
+    background: linear-gradient(135deg, rgb(201, 168, 76), rgb(232, 201, 109));
+    border-width: medium;
+    border-style: none;
+    border-color: currentcolor;
+    border-image: initial;
+    border-radius: 8px;
+    color: rgb(26, 10, 0);
+    font-family: Cinzel, serif;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    cursor: pointer;
+}
+
+.div-game-table-player-hand{
+    position: fixed;
+    bottom: 0px;
+    left: 0px;
+    right: 0px;
+    padding: 12px 0px 18px;
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.75) 0%, transparent 100%);
+    z-index: 30;
+}
+
+.div-game-table-player-hand-cards-container{
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    flex-wrap: wrap;
+}
+
+.div-game-table-is-my-turn{
+    position: fixed;
+    top: 72px;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 7px 18px;
+    border-radius: 20px;
+    background: rgba(232, 201, 109, 0.12);
+    border: 1px solid rgba(232, 201, 109, 0.45);
+    color: rgb(232, 201, 109);
+    font-family: Cinzel, serif;
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    z-index: 40;
+    animation: 1.5s ease 0s infinite normal none running pulse;
+}
+
+
+.div-game-table-notification{
+    font-family: 'Cinzel', serif; 
+    font-size: 12px; 
+    letter-spacing: 0.08em;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+    z-index: 300; 
+    animation: fadeIn 0.2s ease;
+    white-space: nowrap;
+    position: fixed;
+    top: 72px; 
+    left: 50%; 
+    transform: translateX(-50%);
+    padding: 9px 22px;
+    border-radius: 24px;
+}
+
+/*table score*/
 .table-game-final-stats {
     border-collapse: collapse;
     margin: 20px;
@@ -22,37 +471,13 @@
     background: transparent;
 }
 
-.div-content-card {
-    font-size: 20px;
-}
-
-.div-value-card {
-    font-size: 17px;
-}
-
-.div-value-suit {
-    font-size: 15px;
-}
-
-.div-game-header-code{
-    order: 1;
-}
-
-.div-game-header-scores{
-    order: 2;
-}
-
-.div-game-header-leave{
-    order: 3;
-}
-
 @media (max-width: 470px){
     .div-game-header-code{
         order: 1;
         width: calc(50% - 16px);
     }
 
-    .div-game-header-scores{
+    .div-game-header-scores-trump{
         order: 3;
         width: 100%;
     }

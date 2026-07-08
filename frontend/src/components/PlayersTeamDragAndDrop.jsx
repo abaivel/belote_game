@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
 import { api } from '../utils/api';
+import "../styles/PlayersTeamDragAndDrop.css"
 
 export function PlayersTeamDragAndDrop({players}){
   const [lists, setLists] = useState([[], []]);
@@ -54,13 +55,6 @@ export function PlayersTeamDragAndDrop({players}){
         l.forEach((p,j)=>{
             p.seat = 2*j+i;
             listAllPlayers.push(p);
-            /*if (p.userId==myUserId){
-                const saved = localStorage.getItem('belote_game');
-                const game = JSON.parse(saved)
-                game.mySeat = p.seat
-                game.myTeam = p.team
-                localStorage.setItem('belote_game', JSON.stringify(game))
-            }*/
         })
     })
     try{
@@ -72,35 +66,24 @@ export function PlayersTeamDragAndDrop({players}){
   }
 
   return (
-    <div>
+    <div className='div-players-team-drag-drop'>
         <DragDropContext onDragEnd={onDragEnd}>
-        <div style={{ display: 'flex', gap: '20px', marginBottom: 10}}>
+        <div className='div-players-team-drag-drop-context'>
             
             {/* Rendu des deux listes */}
             {Object.keys(lists).map((listId, i) => (
-            <div key={listId} style={{ flex: 1, padding: '12px 20px',borderRadius: 10, background: 'rgba(201, 168, 76, 0.1)', border: '1px solid rgba(201, 168, 76, 0.3)' }}>
-                <p style={{textWrap:'nowrap'}}>Équipe {i+1}</p>
+            <div className='div-list-team-players' key={listId}>
+                <p>Équipe {i+1}</p>
                 <Droppable droppableId={listId}>
                 {(provided) => (
-                    <div ref={provided.innerRef} {...provided.droppableProps} style={{minHeight:70}}>
+                    <div className='div-players-team-droppable' ref={provided.innerRef} {...provided.droppableProps}>
                     {lists[listId].map((item, index) => (
                         <Draggable key={item.id} draggableId={"draggable"+item.id} index={index} isDragDisabled={!isDraggable}>
                         {(provided) => (
-                            <div
+                            <div className='div-players-team-draggable'
                             ref={provided.innerRef}
                             {...provided.draggableProps}
                             {...provided.dragHandleProps}
-                            style={{
-                                fontFamily: 'Cinzel, serif',
-                                fontSize: 11,
-                                padding: '4px 10px',
-                                borderRadius: 20,
-                                background: 'rgb(218 218 218 / 15%)',
-                                border: '1px solid rgb(255 255 255 / 50%)',
-                                marginTop:10,
-                                color: 'rgb(227 228 228)',
-                                ...provided.draggableProps.style,
-                            }}
                             >
                             {item.pseudo}
                             </div>
@@ -117,31 +100,11 @@ export function PlayersTeamDragAndDrop({players}){
         </div>
         </DragDropContext>
         {!isDraggable ?
-            <button onClick={()=>setIsDraggable(true)} style={{border: '1px solid rgba(201, 168, 76, 0.3)',
-                                                                borderRadius: 8,
-                                                                cursor: 'pointer',
-                                                                fontFamily: 'Cinzel, serif',
-                                                                letterSpacing: '0.1em',
-                                                                transition: '0.2s',
-                                                                whiteSpace: 'nowrap',
-                                                                padding: '6px 14px',
-                                                                fontSize: 11,
-                                                                background: 'rgba(201, 168, 76, 0.15)',
-                                                                color: 'rgb(201, 168, 76)'}}>
+            <button onClick={()=>setIsDraggable(true)} >
                 Modifier les équipes
             </button>
         :
-            <button disabled={lists[0].length>2 || lists[1].length>2} onClick={saveModifyTeams} style={{border: '1px solid rgba(201, 168, 76, 0.3)',
-                                                                                                        borderRadius: 8,
-                                                                                                        cursor: 'pointer',
-                                                                                                        fontFamily: 'Cinzel, serif',
-                                                                                                        letterSpacing: '0.1em',
-                                                                                                        transition: '0.2s',
-                                                                                                        whiteSpace: 'nowrap',
-                                                                                                        padding: '6px 14px',
-                                                                                                        fontSize: 11,
-                                                                                                        background: 'rgba(201, 168, 76, 0.15)',
-                                                                                                        color: 'rgb(201, 168, 76)'}}>
+            <button disabled={lists[0].length>2 || lists[1].length>2} onClick={saveModifyTeams}>
                 Enregistrer les équipes
             </button>
         }

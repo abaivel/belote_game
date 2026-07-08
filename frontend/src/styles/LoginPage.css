@@ -1,0 +1,100 @@
+.div-login-background{
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.div-login-container{
+    background: rgba(0, 0, 0, 0.45);
+    border: 1px solid rgba(201, 168, 76, 0.3);
+    border-radius: 16px;
+    padding: 48px 40px;
+    width: 100%;
+    max-width: 400px;
+    backdrop-filter: blur(4px);
+    box-shadow: rgba(0, 0, 0, 0.6) 0px 20px 60px;
+}
+
+.div-login-container-logo{
+    text-align: center;
+    margin-bottom: 36px;
+}
+
+.div-login-logo-title{
+    font-family: Cinzel, serif;
+    font-size: 42px;
+    color: rgb(201, 168, 76);
+    letter-spacing: 0.15em;
+    text-shadow: rgba(201, 168, 76, 0.4) 0px 2px 12px;
+}
+
+.div-login-logo-subtitle{
+    color: rgba(245, 234, 213, 0.5);
+    font-size: 13px;
+    margin-top: 4px;
+    letter-spacing: 0.3em;
+}
+
+.div-login-tabs{
+    display: flex;
+    margin-bottom: 28px;
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid rgba(201, 168, 76, 0.3);
+}
+
+.div-login-tabs button{
+    flex: 1 1 0%;
+    padding: 10px 0px;
+    border: none;
+    font-family: Cinzel, serif;
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.div-login-form{
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.div-login-error{
+    background: rgba(192,57,43,0.2);
+    border: 1px solid rgba(192,57,43,0.4);
+    color: #e74c3c;
+    margin-top: 16px; 
+    padding: 10px 14px;
+    font-size: 13px;
+    border-radius: 8px;
+}
+
+.button-login{
+    width: 100%;
+    margin-top: 24px;
+    padding: 14px 0px;
+    background: linear-gradient(135deg, rgb(201, 168, 76), rgb(232, 201, 109));
+    border-width: medium;
+    border-style: none;
+    border-color: currentcolor;
+    border-image: initial;
+    border-radius: 8px;
+    color: rgb(26, 10, 0);
+    font-family: Cinzel, serif;
+    font-size: 14px;
+    letter-spacing: 0.15em;
+    font-weight: 700;
+    cursor: pointer;
+    transition: 0.2s;
+    box-shadow: rgba(201, 168, 76, 0.3) 0px 4px 16px;
+}
+
+.button-login:disabled{
+    background: rgba(201,168,76,0.2) !important;
+    color: #c9a84c !important;
+    cursor: not-allowed !important;
+    box-shadow: none !important;
+}

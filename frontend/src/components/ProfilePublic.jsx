@@ -3,6 +3,7 @@ import { api } from '../utils/api.js';
 import { ProfileStats } from './ProfileStats.jsx';
 import { StatDisplay } from './StatDisplay.jsx';
 import { ModifyProfile } from './ModifyProfile.jsx';
+import "../styles/ProfilePublic.css"
 
 const PROFILES_TYPES = {
   "Stratège" : {description : "Peu de prises, très haut taux de réussite"},
@@ -101,26 +102,26 @@ export function ProfilePublic({userId, gameId, setNewPseudo}) {
             :
             <>
             {otherUserId &&
-              <div style={{width:'100%', textAlign:'left'}}>
+              <div className='div-profile-public-arrow-back'>
                 <span className="material-symbols-outlined" onClick={goBackToPreviousUser}>
                   arrow_back
                 </span>
               </div>
             }
-            <div style={{display:"flex", justifyContent:"space-between"}}>
-              <div style={{display:"flex", alignItems:"center", gap:10}}>
-                <p style={{textAlign:"left", fontSize: 30}}>{infosUser.pseudo}</p>
+            <div className='div-profile-public-header'>
+              <div className='div-profile-public-header-pseudo'>
+                <p>{infosUser.pseudo}</p>
                 {!userId && !otherUserId && 
                   <span className="material-symbols-outlined" onClick={()=>setIsModifyProfileOpen(true)}>
                     edit
                   </span>
                 }
               </div>
-              <div style={{display:"flex", alignItems:"center", gap:10}}>
+              <div className='div-profile-public-header-personality-profile'>
                 {stats.user_profil &&
                   <>
-                    <img src={"personality_profiles/"+stats.user_profil+".svg"} style={{width: 30}}/>
-                    <p style={{fontSize: 20}} title={stats.user_profil && PROFILES_TYPES[stats.user_profil].description}>{stats.user_profil}</p>
+                    <img src={"personality_profiles/"+stats.user_profil+".svg"}/>
+                    <p title={stats.user_profil && PROFILES_TYPES[stats.user_profil].description}>{stats.user_profil}</p>
                   </>
                 }
               </div>
@@ -129,14 +130,14 @@ export function ProfilePublic({userId, gameId, setNewPseudo}) {
             <div>
                 {infosUser.is_connected 
                     ? 
-                    <div style={{textAlign:"left", display:"flex", alignItems:"center", gap:10}}><span style={{display:"block", width:7, height:7, backgroundColor:"green", borderRadius:50}}></span>Connecté(e)</div> 
+                    <div className='div-profile-public-status-player'><span style={{ backgroundColor:"green" }}></span>Connecté(e)</div> 
                     : 
-                    <div style={{textAlign:"left", display:"flex", alignItems:"center", gap:10}}><span style={{display:"block", width:7, height:7, backgroundColor:"red", borderRadius:50}}></span>Déconnecté(e)</div>
+                    <div className='div-profile-public-status-player'><span style={{ backgroundColor:"red" }}></span>Déconnecté(e)</div>
                 }
                 <br></br>
                 <h2>Statistiques de la partie en cours</h2>
                 <br></br>
-                <div style={{display: "flex", gap:20}}>
+                <div className='div-player-game-stats'>
                     <StatDisplay value={infosUser.nb_rounds_taken} label="Nombre de tours pris"/>
                     <StatDisplay value={infosUser.nb_rounds_taken_won} label="Nombre de tours pris gagnés"/>
                 </div>

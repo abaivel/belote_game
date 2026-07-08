@@ -1,0 +1,46 @@
+.div-players-team-drag-drop-context {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 10px;
+}
+
+.div-list-team-players {
+    flex: 1 1 0%;
+    padding: 12px 20px;
+    border-radius: 10px;
+    background: rgba(201, 168, 76, 0.1);
+    border: 1px solid rgba(201, 168, 76, 0.3);
+}
+
+.div-list-team-players p{
+    text-wrap: nowrap;
+}
+
+.div-players-team-droppable{
+    min-height: 70px;
+}
+
+.div-players-team-draggable{
+    font-family: Cinzel, serif;
+    font-size: 11px;
+    padding: 4px 10px;
+    border-radius: 20px;
+    background: rgba(218, 218, 218, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    margin-top: 10px;
+    color: rgb(227, 228, 228);
+}
+
+.div-players-team-drag-drop button{
+    border: 1px solid rgba(201, 168, 76, 0.3);
+    border-radius: 8px;
+    cursor: pointer;
+    font-family: Cinzel, serif;
+    letter-spacing: 0.1em;
+    transition: 0.2s;
+    white-space: nowrap;
+    padding: 6px 14px;
+    font-size: 11px;
+    background: rgba(201, 168, 76, 0.15);
+    color: rgb(201, 168, 76);
+}

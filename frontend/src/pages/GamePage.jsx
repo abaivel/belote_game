@@ -119,8 +119,8 @@ export function GamePage({ gameId, gameCode, mySeat, onLeave, onReload }) {
   // ---- Chargement initial ----
   if (!state) {
     return (
-      <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <div style={{ fontFamily: "'Cinzel', serif", color: '#c9a84c', letterSpacing: '0.2em' }}>
+      <div className='div-game-loading'>
+        <div>
           Chargement…
         </div>
       </div>
@@ -158,39 +158,32 @@ export function GamePage({ gameId, gameCode, mySeat, onLeave, onReload }) {
           <ProfilePublic gameId={game.id} userId={idUserSelected}/>
         </DialogWindow>
       }
-      <div style={{ minHeight: '100vh', position: 'relative', overflow: 'hidden' }}>
+      <div className='div-game-container'>
 
         {/* ========== BARRE DU HAUT ========== */}
-        <div style={{
-          position: 'fixed', top: 0, left: 0, right: 0, zIndex: 50,
-          display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-          padding: '8px 16px',
-          background: 'rgba(0,0,0,0.55)', backdropFilter: 'blur(4px)',
-          borderBottom: '1px solid rgba(201,168,76,0.15)',
-          flexWrap: 'wrap', gap: 8,
-        }}>
+        <div className='div-game-header'>
           {/* Code */}
-          <div className='div-game-header-code' style={{ fontFamily: "'Cinzel', serif" }}>
-            <span style={{ color: 'rgba(201,168,76,0.45)', fontSize: 10, letterSpacing: '0.2em' }}>CODE </span>
-            <span style={{ color: '#c9a84c', fontSize: 15, letterSpacing: '0.3em' }}>{gameCode}</span>
+          <div className='div-game-header-code'>
+            <span>CODE </span>
+            <span>{gameCode}</span>
           </div>
 
           {/* Scores + atout + qui a pris */}
-          <div className='div-game-header-scores' style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2 }}>
-            <div style={{ display: 'flex', gap: 20, alignItems: 'center' }}>
+          <div className='div-game-header-scores-trump'>
+            <div className='div-game-header-scores'>
               <ScoreDisplay label="Équipe 1" score={game.team1Score} total={game.team1Total} color={TEAM_COLORS[1].text} />
-              <span style={{ color: 'rgba(201,168,76,0.3)', fontFamily: "'Cinzel', serif", fontSize: 11 }}>VS</span>
+              <span className='div-game-header-scores-vs'>VS</span>
               <ScoreDisplay label="Équipe 2" score={game.team2Score} total={game.team2Total} color={TEAM_COLORS[2].text} />
             </div>
             {/* Atout + preneur */}
             {round.trumpSuit && (
-              <div style={{ display: 'flex', gap: 8, alignItems: 'center', fontSize: 11 }}>
-                <span style={{ color: SUIT_COLORS[round.trumpSuit], fontSize: 16 }}>{SUIT_SYMBOLS[round.trumpSuit]}</span>
-                <span style={{ color: 'rgba(245,234,213,0.5)' }}>Atout</span>
+              <div className='div-game-header-trump'>
+                <span style={{ color: SUIT_COLORS[round.trumpSuit] }}>{SUIT_SYMBOLS[round.trumpSuit]}</span>
+                <span>Atout</span>
                 {takerPlayer && (
-                  <span style={{ color: '#c9a84c' }}>
+                  <span className='span-header-trump-player-taker'>
                     · Pris par <strong>{takerPlayer.pseudo}</strong>
-                    <span style={{ color: TEAM_COLORS[takerPlayer.team]?.text, marginLeft: 4 }}>
+                    <span style={{ color: TEAM_COLORS[takerPlayer.team]?.text }}>
                       ({TEAM_COLORS[takerPlayer.team]?.label})
                     </span>
                   </span>
@@ -200,21 +193,16 @@ export function GamePage({ gameId, gameCode, mySeat, onLeave, onReload }) {
           </div>
 
           {/* Manche + quitter */}
-          <div className='div-game-header-leave' style={{ display: 'flex', alignItems: 'center', gap: 10, justifyContent: 'flex-end' }}>
-            <span style={{ fontSize: 10, color: 'rgba(245,234,213,0.35)', fontFamily: "'Cinzel', serif" }}>
+          <div className='div-game-header-leave'>
+            <span>
               MANCHE {game.roundNumber}
             </span>
-            <button onClick={handleLeave} style={{
-              padding: '5px 11px', background: 'transparent',
-              border: '1px solid rgba(245,234,213,0.2)', borderRadius: 6,
-              color: 'rgba(245,234,213,0.5)', fontSize: 10,
-              fontFamily: "'Cinzel', serif", cursor: 'pointer', letterSpacing: '0.1em',
-            }}>QUITTER</button>
+            <button onClick={handleLeave}>QUITTER</button>
           </div>
         </div>
 
         {/* ========== TABLE ========== */}
-        <div style={{ paddingTop: 70, paddingBottom: 130, minHeight: '100vh', position: 'relative' }}>
+        <div className='div-game-table'>
 
           {/* ---- 4 JOUEURS aux positions visuelles ---- */}
           {[0, 1, 2, 3].map(visualSeat => {
@@ -230,38 +218,28 @@ export function GamePage({ gameId, gameCode, mySeat, onLeave, onReload }) {
             const isHorizontal = visualSeat === 1 || visualSeat === 3;
 
             return (
-              <div key={physSeat} style={{
-                position: 'fixed', ...pos,
-                display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4,
-                zIndex: 10,
-              }}>
+              <div className='div-game-table-seat-container' key={physSeat} style={{...pos}}>
                 {/* Badge nom + équipe */}
-                <div onClick={()=>setIdUserSelected(p.userId)} style={{
-                  fontFamily: "'Cinzel', serif", fontSize: 11,
-                  padding: '4px 10px', borderRadius: 20,
-                  display: 'flex', alignItems: 'center', gap: 6,
+                <div className='div-game-table-seat-player-name-team' onClick={()=>setIdUserSelected(p.userId)} style={{
                   background: isCurrentTurn ? 'rgba(232,201,109,0.12)' : teamColor.bg,
                   border: `1px solid ${isCurrentTurn ? 'rgba(232,201,109,0.5)' : teamColor.border}`,
                   color: isCurrentTurn ? '#e8c96d' : teamColor.text,
-                  transition: 'all 0.3s',
-                  whiteSpace: 'nowrap',
                 }}>
-                  {isCurrentTurn && <span style={{ fontSize: 7 }}>●</span>}
+                  {isCurrentTurn && <span className='span-point'>●</span>}
                   {p.pseudo}
-                  {isMe && <span style={{ fontSize: 9, opacity: 0.7 }}>(vous)</span>}
-                  <span style={{
-                    fontSize: 9, padding: '1px 5px', borderRadius: 8,
+                  {isMe && <span className='span-is-me'>(vous)</span>}
+                  <span className='span-label-team' style={{
                     background: teamColor.bg, border: `1px solid ${teamColor.border}`,
                     color: teamColor.text,
                   }}>{teamColor.label}</span>
-                  <span style={{ fontSize: 8, color: p.is_connected ? '#2ed573' : '#ff4757' }}>
+                  <span className='span-point' style={{ color: p.is_connected ? '#2ed573' : '#ff4757' }}>
                     {p.is_connected ? '●' : '○'}
                   </span>
                 </div>
 
                 {/* Dos de cartes adverses */}
                 {!isMe && cardCount > 0 && (
-                  <div style={{ display: 'flex', flexDirection: isHorizontal ? "column" : "row" }}>
+                  <div className='div-game-table-seat-other-cards' style={{ flexDirection: isHorizontal ? "column" : "row" }}>
                     {Array.from({ length: cardCount }).map((_, i) => (
                       <div key={i} style={{
                         marginLeft: isHorizontal? 0 : (i === 0 ? 0 : -28),
@@ -282,63 +260,38 @@ export function GamePage({ gameId, gameCode, mySeat, onLeave, onReload }) {
 
           {/* ---- CARTES DU PLI — CROIX CENTRALE ---- */}
           {(isPlaying || showLastTrick) && (
-            <div style={{
-              position: 'fixed', top: '50%', left: '50%',
-              transform: 'translate(-50%, -50%)',
-              width: 240, height: 240,
-              zIndex: 20, pointerEvents: 'none',
-            }}>
+            <div className='div-game-table-playing-cards'>
               {/* Tapis */}
-              <div style={{
-                position: 'absolute', inset: 0, borderRadius: '50%',
-                background: 'rgba(0,0,0,0.18)',
-                border: '1px solid rgba(201,168,76,0.12)',
-              }} />
+              <div className='div-game-table-playing-cards-central-circle' />
 
               {showLastTrick && (
-                <div style={{
-                  position: 'absolute', top: -22, left: '50%', transform: 'translateX(-50%)',
-                  fontFamily: "'Cinzel', serif", fontSize: 9, color: 'rgba(201,168,76,0.6)',
-                  letterSpacing: '0.15em', whiteSpace: 'nowrap',
-                }}>DERNIER PLI</div>
+                <div className='div-game-table-playing-cards-last-trick'>DERNIER PLI</div>
               )}
 
               {/* Nord : le joueur en face de nous → physique toPhysical(0) = (mySeat+2)%4 */}
               {trickBySeat[toPhysical(0)] && (
-                <div style={{
-                  position: 'absolute',
-                  top: 8, left: '50%', transform: 'translateX(-50%)',
-                }}>
+                <div className='div-game-table-playing-cards-north'>
                   <Card suit={trickBySeat[toPhysical(0)].suit} value={trickBySeat[toPhysical(0)].value} small />
                 </div>
               )}
 
               {/* Est : à notre droite → physique toPhysical(1) = (mySeat+3)%4 */}
               {trickBySeat[toPhysical(1)] && (
-                <div style={{
-                  position: 'absolute',
-                  right: 8, top: '50%', transform: 'translateY(-50%)',
-                }}>
+                <div className='div-game-table-playing-cards-east'>
                   <Card suit={trickBySeat[toPhysical(1)].suit} value={trickBySeat[toPhysical(1)].value} small />
                 </div>
               )}
 
               {/* Sud : nous → physique mySeat = toPhysical(2) */}
               {trickBySeat[mySeat] && (
-                <div style={{
-                  position: 'absolute',
-                  bottom: 8, left: '50%', transform: 'translateX(-50%)',
-                }}>
+                <div className='div-game-table-playing-cards-south'>
                   <Card suit={trickBySeat[mySeat].suit} value={trickBySeat[mySeat].value} small />
                 </div>
               )}
 
               {/* Ouest : à notre gauche → physique toPhysical(3) = (mySeat+1)%4 */}
               {trickBySeat[toPhysical(3)] && (
-                <div style={{
-                  position: 'absolute',
-                  left: 8, top: '50%', transform: 'translateY(-50%)',
-                }}>
+                <div className='div-game-table-playing-cards-west'>
                   <Card suit={trickBySeat[toPhysical(3)].suit} value={trickBySeat[toPhysical(3)].value} small />
                 </div>
               )}
@@ -347,40 +300,23 @@ export function GamePage({ gameId, gameCode, mySeat, onLeave, onReload }) {
 
           {/* ---- EN ATTENTE ---- */}
           {isWaiting && (
-            <div style={{
-              position: 'fixed', inset:0, margin:"auto", textAlign: "center", zIndex:50, width: "fit-content", height:"fit-content"
-            }}>
-              <div style={{ fontFamily: "'Cinzel', serif", fontSize: 20, color: '#c9a84c', marginBottom: 10 }}>
+            <div className='div-game-table-waiting-container'>
+              <div className='div-game-table-waiting-title'>
                 En attente des joueurs
               </div>
-              <div style={{ color: 'rgba(245,234,213,0.55)', fontSize: 14, marginBottom: 20 }}>
+              <div className='div-game-table-waiting-nb-players'>
                 {players.length}/4 joueurs présents
               </div>
-              <div style={{
-                padding: '12px 28px', borderRadius: 10,
-                background: 'rgba(201,168,76,0.1)', border: '1px solid rgba(201,168,76,0.3)',
-                marginBottom: 16,
-              }}>
-                <span style={{ color: 'rgba(245,234,213,0.5)', fontSize: 12 }}>Code : </span>
-                <span style={{ fontFamily: "'Cinzel', serif", color: '#c9a84c', fontSize: 22, letterSpacing: '0.3em' }}>
+              <div className='div-game-table-waiting-code'>
+                <span>Code : </span>
+                <span>
                   {gameCode}
                 </span>
               </div>
               
               <PlayersTeamDragAndDrop players={players} myUserId={user.id} onReload={onReload}/>
               {players.length==4 && 
-                <button onClick={handleStartGame} style={{border: '1px solid rgba(201, 168, 76, 0.3)',
-                                                          borderRadius: 8,
-                                                          cursor: 'pointer',
-                                                          fontFamily: 'Cinzel, serif',
-                                                          letterSpacing: '0.1em',
-                                                          transition: '0.2s',
-                                                          whiteSpace: 'nowrap',
-                                                          padding: '6px 14px',
-                                                          fontSize: 11,
-                                                          background: 'rgba(201, 168, 76, 0.15)',
-                                                          color: 'rgb(201, 168, 76)',
-                                                          marginTop:10}}>
+                <button className='button-game-table-start-game' onClick={handleStartGame}>
                   Commencer la partie
                 </button>
               }
@@ -389,35 +325,27 @@ export function GamePage({ gameId, gameCode, mySeat, onLeave, onReload }) {
 
           {/* ---- ENCHÈRES ---- */}
           {isBidding && (
-            <div style={{ position: 'relative', width: '100%', height: 'calc(100vh - 200px)', display: 'flex', flexDirection: 'column', justifyContent: 'center'}}>
+            <div className='div-game-table-bidding-panel'>
               <BiddingPanel state={state} myPlayer={myPlayer} onBid={handleBid} loading={bidLoading} />
             </div>
           )}
 
           {/* ---- PARTIE TERMINÉE ---- */}
           {isFinished && (
-            <div style={{
-              position: 'fixed', top: '50%', left: '50%', transform: 'translate(-50%,-50%)',
-              background: 'rgba(5,20,10,0.97)', border: '1px solid rgba(201,168,76,0.5)',
-              borderRadius: 16, padding: '40px 50px', textAlign: 'center', zIndex: 200,
-            }}>
-              <div style={{ fontFamily: "'Cinzel', serif", fontSize: 26, color: '#c9a84c', marginBottom: 24 }}>
+            <div className='div-game-table-game-over-container'>
+              <div className='div-game-table-game-over-title'>
                 PARTIE TERMINÉE
               </div>
-              <div style={{ display: 'flex', gap: 40, justifyContent: 'center', marginBottom: 32 }}>
+              <div className='div-game-table-game-over-scores-container'>
                 {[1, 2].map(team => (
-                  <div key={team}>
-                    <div style={{
-                      fontSize: 11, letterSpacing: '0.1em', marginBottom: 4,
-                      color: TEAM_COLORS[team].text, fontFamily: "'Cinzel', serif",
-                    }}>ÉQUIPE {team}</div>
-                    <div style={{
-                      fontSize: 11, color: 'rgba(245,234,213,0.5)', marginBottom: 8,
-                    }}>
+                  <div className='div-game-table-game-over-score-container' key={team}>
+                    <div className='div-game-table-game-over-score-name-team' style={{color: TEAM_COLORS[team].text}}>
+                      ÉQUIPE {team}
+                    </div>
+                    <div className='div-game-table-game-over-score-team-players'>
                       {players.filter(p => p.team == team).map(p => p.pseudo).join(' & ')}
                     </div>
-                    <div style={{
-                      fontSize: 44, fontFamily: "'Cinzel', serif",
+                    <div className='div-game-table-game-over-score' style={{
                       color: (team === 1 ? game.team1Total : game.team2Total) >=
                             (team === 1 ? game.team2Total : game.team1Total)
                         ? '#e8c96d' : 'rgba(245,234,213,0.5)',
@@ -428,7 +356,7 @@ export function GamePage({ gameId, gameCode, mySeat, onLeave, onReload }) {
                 ))}
               </div>
               <div>
-                <div style={{ fontFamily: "'Cinzel', serif", fontSize: 18, color: '#c9a84c', marginBottom: 24 }}>
+                <div className='div-game-table-game-over-stats-title'>
                   Statistiques
                 </div>
                 <p>Nombre de manches : {game.roundNumber}</p>
@@ -467,25 +395,14 @@ export function GamePage({ gameId, gameCode, mySeat, onLeave, onReload }) {
                   
                 </table>
               </div>
-              <button onClick={handleLeave} style={{
-                padding: '12px 28px', background: 'linear-gradient(135deg,#c9a84c,#e8c96d)',
-                border: 'none', borderRadius: 8, color: '#1a0a00',
-                fontFamily: "'Cinzel', serif", fontSize: 13, fontWeight: 700,
-                letterSpacing: '0.1em', cursor: 'pointer',
-              }}>RETOUR AU LOBBY</button>
+              <button onClick={handleLeave}>RETOUR AU LOBBY</button>
             </div>
           )}
 
           {/* ---- MAIN DU JOUEUR ---- */}
           {myPlayer && myCards && myCards.length > 0 && (
-            <div style={{
-              position: 'fixed', bottom: 0, left: 0, right: 0,
-              padding: '12px 0 18px',
-              display: 'flex', justifyContent: 'center', alignItems: 'flex-end',
-              background: 'linear-gradient(to top, rgba(0,0,0,0.75) 0%, transparent 100%)',
-              zIndex: 30,
-            }}>
-              <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'flex-end', flexWrap: "wrap" }}>
+            <div className='div-game-table-player-hand'>
+              <div className='div-game-table-player-hand-cards-container'>
                 {sortCards(myCards, round.trumpSuit).map((card, i, arr) => {
                   const canPlay = isMyTurn && isPlaying;
                   return (
@@ -510,30 +427,16 @@ export function GamePage({ gameId, gameCode, mySeat, onLeave, onReload }) {
 
         {/* ---- INDICATEUR TOUR ---- */}
         {isMyTurn && isPlaying && (
-          <div style={{
-            position: 'fixed', top: 72, left: '50%', transform: 'translateX(-50%)',
-            padding: '7px 18px', borderRadius: 20,
-            background: 'rgba(232,201,109,0.12)',
-            border: '1px solid rgba(232,201,109,0.45)',
-            color: '#e8c96d', fontFamily: "'Cinzel', serif", fontSize: 11,
-            letterSpacing: '0.1em', zIndex: 40,
-            animation: 'pulse 1.5s infinite',
-          }}>
+          <div className='div-game-table-is-my-turn'>
             ✦ À VOUS DE JOUER ✦
           </div>
         )}
 
         {/* ---- NOTIFICATION ---- */}
         {notification && (
-          <div style={{
-            position: 'fixed', top: 72, left: '50%', transform: 'translateX(-50%)',
-            padding: '9px 22px', borderRadius: 24,
+          <div className='div-game-table-notification' style={{
             background: notification.isError ? 'rgba(192,57,43,0.92)' : 'rgba(201,168,76,0.92)',
             color: notification.isError ? '#fff' : '#1a0a00',
-            fontFamily: "'Cinzel', serif", fontSize: 12, letterSpacing: '0.08em',
-            boxShadow: '0 4px 20px rgba(0,0,0,0.4)',
-            zIndex: 300, animation: 'fadeIn 0.2s ease',
-            whiteSpace: 'nowrap',
           }}>
             {notification.msg}
           </div>
@@ -542,13 +445,6 @@ export function GamePage({ gameId, gameCode, mySeat, onLeave, onReload }) {
         {/* ---- CHAT ---- */}
         <Chat gameId={gameId} messages={messages || []} pseudo={user?.pseudo} />
 
-        <style>{`
-          @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.55} }
-          @keyframes fadeIn { from{opacity:0;transform:translateX(-50%) translateY(-8px)} to{opacity:1;transform:translateX(-50%) translateY(0)} }
-          ::-webkit-scrollbar{width:4px}
-          ::-webkit-scrollbar-track{background:rgba(255,255,255,0.03)}
-          ::-webkit-scrollbar-thumb{background:rgba(201,168,76,0.3);border-radius:2px}
-        `}</style>
       </div>
     </>
   );
@@ -556,13 +452,13 @@ export function GamePage({ gameId, gameCode, mySeat, onLeave, onReload }) {
 
 function ScoreDisplay({ label, score, total, color }) {
   return (
-    <div style={{ textAlign: 'center' }}>
-      <div style={{ fontSize: 9, letterSpacing: '0.12em', color, fontFamily: "'Cinzel', serif", opacity: 0.8 }}>
+    <div className='div-game-header-score-display'>
+      <div style={{ color }}>
         {label.toUpperCase()}
       </div>
-      <div style={{ fontFamily: "'Cinzel', serif", color, fontSize: 17 }}>
+      <div style={{ color }}>
         {score}
-        <span style={{ fontSize: 10, opacity: 0.55, marginLeft: 3 }}>({total})</span>
+        <span>({total})</span>
       </div>
     </div>
   );

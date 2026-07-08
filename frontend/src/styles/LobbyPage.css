@@ -1,0 +1,208 @@
+.div-lobby {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 40px 20px;
+}
+
+.div-lobby-header{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    max-width: 600px;
+    margin-bottom: 40px;
+    flex-wrap: wrap;
+}
+
+.div-lobby-header-logo{
+    font-family: Cinzel, serif;
+    font-size: 28px;
+    color: rgb(201, 168, 76);
+    letter-spacing: 0.1em;
+}
+
+.div-lobby-header-user{
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.span-lobby-header-user-hello{
+    color: rgba(245, 234, 213, 0.7);
+    font-size: 14px;
+}
+
+.span-lobby-header-user-hello strong{
+    color: #e8c96d;
+}
+
+.span-lobby-header-user-icon-profile{
+    color: rgb(226, 195, 103);
+    cursor: pointer;
+}
+
+.div-lobby-header-user button {
+    border: 1px solid rgba(201, 168, 76, 0.3);
+    border-radius: 8px;
+    cursor: pointer;
+    font-family: Cinzel, serif;
+    letter-spacing: 0.1em;
+    transition: 0.2s;
+    white-space: nowrap;
+    padding: 8px 16px;
+    font-size: 12px;
+    background: transparent;
+    color: rgba(245, 234, 213, 0.6);
+}
+
+.div-lobby-principal-panel{
+    background: rgba(0, 0, 0, 0.4);
+    border: 1px solid rgba(201, 168, 76, 0.25);
+    border-radius: 16px;
+    padding: 32px;
+    width: 100%;
+    max-width: 600px;
+    backdrop-filter: blur(4px);
+}
+
+.div-lobby-principal-panel section:not(:last-child){
+    margin-bottom: 36px;
+}
+
+.div-lobby-principal-panel section h2{
+    font-family: Cinzel, serif;
+    font-size: 15px;
+    color: rgb(201, 168, 76);
+    letter-spacing: 0.1em;
+    margin-bottom: 4px;
+}
+
+.section-lobby-create-game p{
+    color: rgba(245, 234, 213, 0.6);
+    font-size: 14px;
+    margin-bottom: 16px;
+}
+
+.section-lobby-create-game button, .section-lobby-join-code button{
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-family: Cinzel, serif;
+    letter-spacing: 0.1em;
+    transition: 0.2s;
+    white-space: nowrap;
+    padding: 11px 22px;
+    font-size: 13px;
+    background: linear-gradient(135deg, rgb(201, 168, 76), rgb(232, 201, 109));
+    color: rgb(26, 10, 0);
+    font-weight: 700;
+    box-shadow: rgba(201, 168, 76, 0.25) 0px 4px 12px;
+}
+
+.div-lobby-separator{
+    border-top: 1px solid rgba(201, 168, 76, 0.2);
+    margin: 0px -32px 32px;
+    padding: 0px;
+}
+
+.section-lobby-join-code div{
+    display: flex;
+    gap: 10px;
+    margin-top: 12px;
+    flex-wrap: wrap;
+}
+
+.section-lobby-join-code input{
+    flex: 1 1 0%;
+    padding: 11px 14px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(201, 168, 76, 0.25);
+    border-radius: 8px;
+    color: rgb(245, 234, 213);
+    font-size: 18px;
+    font-family: Cinzel, serif;
+    letter-spacing: 0.3em;
+    text-align: center;
+    outline: none;
+    min-width: 100%;
+}
+
+.section-lobby-join-code input:focus{
+    border-color: rgba(201,168,76,0.7) !important;
+}
+
+.section-lobby-list-games p{
+    color: rgba(245,234,213,0.4);
+    font-size: 14px;
+    margin-top: 12px;
+}
+
+.div-lobby-list-games{
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 12px;
+}
+
+.div-lobby-game{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 16px;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(201, 168, 76, 0.15);
+    border-radius: 8px;
+    flex-wrap: wrap;
+}
+
+.span-lobby-game-code{
+    font-family: Cinzel, serif;
+    color: rgb(201, 168, 76);
+    letter-spacing: 0.15em;
+    font-size: 16px;
+}
+
+.span-lobby-game-nb-players{
+    margin-left: 12px;
+    color: rgba(245, 234, 213, 0.5);
+    font-size: 13px;
+}
+
+.span-lobby-game-players-pseudos{
+    margin-left: 8px;
+    color: rgba(245, 234, 213, 0.4);
+    font-size: 11px;
+}
+
+.span-lobby-game-status{
+    font-size: 11px;
+    padding: 3px 8px;
+    border-radius: 12px;
+}
+
+.button-lobby-game-join{
+    border: 1px solid rgba(201, 168, 76, 0.3);
+    border-radius: 8px;
+    cursor: pointer;
+    font-family: Cinzel, serif;
+    letter-spacing: 0.1em;
+    transition: 0.2s;
+    white-space: nowrap;
+    padding: 6px 14px;
+    font-size: 11px;
+    background: rgba(201, 168, 76, 0.15);
+    color: rgb(201, 168, 76);
+    margin-left: 10px;
+}
+
+.div-lobby-error{
+    background: rgba(192,57,43,0.2);
+    border: 1px solid rgba(192,57,43,0.4);
+    color: #e74c3c;
+    margin-top: 16px; 
+    padding: 10px 14px;
+    font-size: 13px;
+    border-radius: 8px;
+}

@@ -1,0 +1,47 @@
+.div-profile-public-arrow-back{
+    width:100%;
+    text-align: left;
+}
+
+.div-profile-public-header{
+    display: flex;
+    justify-content: space-between;
+}
+
+.div-profile-public-header div{
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.div-profile-public-header-pseudo p{
+    text-align: left;
+    font-size: 30px;
+}
+
+.div-profile-public-header-personality-profile img{
+    width: 30px;
+}
+
+.div-profile-public-header-personality-profile p{
+    font-size: 20px;
+}
+
+.div-profile-public-status-player {
+    text-align: left;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.div-profile-public-status-player span{
+    display: block;
+    width: 7px;
+    height: 7px;
+    border-radius: 50px;
+}
+
+.div-player-game-stats {
+    display: flex;
+    gap:20px;
+}
