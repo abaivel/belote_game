@@ -1,0 +1,34 @@
+.label-input-field{
+    display: block;
+    font-size: 11px; 
+    letter-spacing: 0.15em; 
+    color: rgba(245,234,213,0.6); 
+    margin-bottom: 6px;
+    font-family: 'Cinzel', serif; 
+    text-align: left;
+}
+
+.input-field{
+    width: 100%; 
+    padding: 11px 14px;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(201,168,76,0.25);
+    border-radius: 8px;
+    outline: none;
+    color: #f5ead5;
+    font-size: 15px;
+    font-family: 'Crimson Pro', serif;
+    transition: border-color 0.2s;
+}
+
+.input-field:focus{
+    border-color: rgba(201,168,76,0.7) !important;
+}
+
+.password-visibility-bt{
+    color: #2d6a4f;
+    position: relative; 
+    top: -32px;
+    left: calc(100% - 33px); 
+    cursor: pointer;
+}

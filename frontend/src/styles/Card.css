@@ -1,0 +1,100 @@
+.div-card-face-down{
+    width: 52px;
+    height: 74px;
+    border-radius: 6px;
+    background: linear-gradient(135deg, rgb(26, 71, 42) 25%, rgb(45, 106, 79) 50%, rgb(26, 71, 42) 75%);
+    border: 2px solid rgb(201, 168, 76);
+    box-shadow: rgba(0, 0, 0, 0.4) 2px 3px 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.div-card-face-down span{
+    color: rgb(201, 168, 76);
+    font-size: 13px;
+    opacity: 0.6;
+}
+
+.div-card-face-up{
+    border-radius: 6px;
+    background: rgb(255, 253, 245);
+    transition: transform 0.15s, box-shadow 0.15s, border-color 0.15s;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    padding: 1px 2px;
+    flex-shrink: 0;
+    position: relative;
+    user-select: none;
+}
+
+.div-card-corner-up-left{
+    line-height: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    z-index: 15;
+}
+
+.div-card-corner-down-right{
+    line-height: 1;
+    transform: rotate(180deg);
+    align-self: flex-end;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    z-index: 15;
+}
+
+.div-content-card {
+    font-size: 15px;
+    text-align: center;
+    align-content: center;
+    display: flex;
+    flex-direction: column;
+    font-family: Symboles;
+    padding: 4px 0;
+}
+
+.div-content-card img{
+    max-height: 103%;
+    margin-left: -8px;
+    margin-right: -8px;
+    z-index: 10;
+}
+
+.div-value-card {
+    font-size: 15px;
+    font-weight: 400;
+    font-family: Oswald;
+}
+
+.div-value-suit {
+    font-size: 7px;
+    font-family: Symboles;
+}
+
+.div-card-small .div-value-card {
+    font-size: 12px !important;
+}
+
+.div-card-small .div-value-suit {
+    font-size: 5px !important;
+}
+
+.div-card-small .div-content-card{
+    font-size: 12px !important;
+}
+
+.div-card-is-playable {
+    position: absolute;
+    bottom: -6px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 6px; 
+    height: 6px;
+    border-radius: 50%;
+    background: #c9a84c;
+}

@@ -1,0 +1,124 @@
+.bidding-panel-window {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(5,18,10,0.97);
+    border: 1px solid rgba(201,168,76,0.5);
+    border-radius: 16px;
+    padding: 20px 28px;
+    min-width: 300px;
+    max-width: 400px;
+    text-align: center;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.8);
+    z-index: 40;
+}
+
+.bidding-panel-window h3{
+    font-family: 'Cinzel', serif; 
+    color: #c9a84c;
+    font-size: 15px;
+    letter-spacing: 0.1em; 
+    margin-bottom: 10px;
+}
+
+.div-card-turned-over{
+    display: flex; 
+    align-items: center; 
+    justify-content: center; 
+    gap: 14px;
+    margin-bottom: 14px;
+}
+
+.div-card-turned-over-infos{
+    text-align: left;
+}
+
+.div-card-turned-over-infos-title{
+    font-size: 10px;
+    color: rgba(245,234,213,0.4); 
+    letter-spacing: 0.15em;
+    margin-bottom: 4px;
+}
+
+.div-card-turned-over-infos-symbol{
+    font-size: 28px;
+}
+
+.div-card-turned-over-infos-label{
+    font-size: 13px;
+}
+
+.p-who-speaks{
+    font-size: 13px; 
+    color: rgba(245,234,213,0.6); 
+    margin-bottom: 12px;
+}
+
+.p-who-speaks span{
+    color: #e8c96d;
+    font-weight: bold;
+}
+
+.div-choice-trump{
+    margin-bottom: 12px;
+}
+
+.div-choice-trump p{
+    font-size: 11px;
+    color: rgba(245,234,213,0.4);
+    letter-spacing: 0.1em;
+    margin-bottom: 8px;
+}
+
+.div-choice-trump div{
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+}
+
+.div-choice-trump button{
+    width: 54px;
+    height: 54px;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.15s;
+    font-size: 26;
+}
+
+.p-error-bidding {
+    color: #e74c3c;
+    font-size: 12px;
+    margin-bottom: 8px;
+}
+
+.div-choice-buttons {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+}
+
+.div-choice-buttons button{
+    padding: 9px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-family: 'Cinzel', serif;
+    font-size: 12px;
+    font-weight: 700px;
+    letter-spacing: 0.1em;
+}
+
+.div-choice-button-pass{
+    border: 1px solid rgba(245,234,213,0.25);
+    background: transparent;
+    color: rgba(245,234,213,0.7);
+}
+
+.div-choice-button-take{
+    background: linear-gradient(135deg,#c9a84c,#e8c96d);
+    color: #1a0a00;
+}
+
+.div-choice-button-take:disabled{
+    background: rgba(201,168,76,0.15);
+    color: rgba(201,168,76,0.4);
+}
