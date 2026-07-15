@@ -56,6 +56,25 @@ define('ALLOWED_ORIGIN', $_ENV['ALLOWED_ORIGIN']);
 // Toute erreur/exception PHP renvoie du JSON au lieu d'une page HTML 500
 
 set_exception_handler(function(Throwable $e) {
+    // 1. Enregistrement dans le fichier de log sur le serveur
+    $logFile = __DIR__ . '\..\log\exceptions.log'; // Chemin du fichier (ici à la racine du script)
+    
+    // Formatage d'un message détaillé pour le log (Date, Type, Message, Fichier, Ligne, Stack Trace)
+    $logMessage = sprintf(
+        "[%s] [%s] %s dans %s à la ligne %d\nStack trace:\n%s\n%s\n",
+        date('Y-m-d H:i:s'),
+        get_class($e),
+        $e->getMessage(),
+        $e->getFile(),
+        $e->getLine(),
+        $e->getTraceAsString(),
+        str_repeat('-', 80) // Ligne de séparation pour la lisibilité
+    );
+    
+    // Écrit dans le fichier (crée le fichier s'il n'existe pas, ou ajoute à la fin 'FILE_APPEND')
+    // Le verrou 'LOCK_EX' évite les conflits d'écriture simultanée
+    file_put_contents($logFile, $logMessage, FILE_APPEND | LOCK_EX);
+    
     http_response_code(500);
     header('Content-Type: application/json; charset=utf-8');
     header('Access-Control-Allow-Origin: ' . ALLOWED_ORIGIN);
